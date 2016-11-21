@@ -4,3 +4,39 @@
 [submodule "Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers"]
 	path = Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers
 	url = https://github.com/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers.git
+[submodule "ThinkJava/ThinkJava"]
+	path = ThinkJava/ThinkJava
+	url = https://github.com/AllenDowney/ThinkJava.git
+[submodule "ThinkCS/ThinkCS"]
+	path = ThinkCS/ThinkCS
+	url = https://github.com/AllenDowney/ThinkCS.git
+[submodule "LittleBookOfSemaphores/LittleBookOfSemaphores"]
+	path = LittleBookOfSemaphores/LittleBookOfSemaphores
+	url = https://github.com/AllenDowney/LittleBookOfSemaphores.git
+[submodule "ThinkComplexity/ThinkComplexity2"]
+	path = ThinkComplexity/ThinkComplexity2
+	url = https://github.com/AllenDowney/ThinkComplexity2.git
+[submodule "ProbablyOverThinkingIt/ProbablyOverthinkingIt"]
+	path = ProbablyOverThinkingIt/ProbablyOverthinkingIt
+	url = https://github.com/AllenDowney/ProbablyOverthinkingIt.git
+[submodule "ThinkBayes/ThinkBayes2"]
+	path = ThinkBayes/ThinkBayes2
+	url = https://github.com/AllenDowney/ThinkBayes2.git
+[submodule "ThinkDSP/ThinkDSP"]
+	path = ThinkDSP/ThinkDSP
+	url = https://github.com/AllenDowney/ThinkDSP.git
+[submodule "ThinkStats/ThinkStats2"]
+	path = ThinkStats/ThinkStats2
+	url = https://github.com/AllenDowney/ThinkStats2.git
+[submodule "ThinkPython/ThinkPython2"]
+	path = ThinkPython/ThinkPython2
+	url = https://github.com/AllenDowney/ThinkPython2.git
+[submodule "ThinkOS/ThinkOS"]
+	path = ThinkOS/ThinkOS
+	url = https://github.com/AllenDowney/ThinkOS.git
+[submodule "ThinkCPP/ThinkCPP"]
+	path = ThinkCPP/ThinkCPP
+	url = https://github.com/AllenDowney/ThinkCPP.git
+[submodule "PhysicalModelingInMATLAB/PhysicalModelingInMATLAB"]
+	path = PhysicalModelingInMATLAB/PhysicalModelingInMATLAB
+	url = https://github.com/AllenDowney/PhysicalModelingInMATLAB.git
