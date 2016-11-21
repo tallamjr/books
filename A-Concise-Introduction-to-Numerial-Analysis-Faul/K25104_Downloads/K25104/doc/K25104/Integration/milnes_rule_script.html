@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of milnes_rule_script</title>
+  <meta name="keywords" content="milnes_rule_script">
+  <meta name="description" content="Usage example for milnes_rule">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">Integration</a> &gt; milnes_rule_script.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\Integration&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>milnes_rule_script
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Usage example for milnes_rule</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Usage example for milnes_rule</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="milnes_rule.html" class="code" title="function [ Q ] = milnes_rule( f,a,b )">milnes_rule</a>	Employs Milne's rule to integrate f between a and b</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% Usage example for milnes_rule</span>
+0002 
+0003 a = -1;
+0004 b= 1;
+0005 <span class="keyword">for</span> k = 0:5
+0006     f = @(x) x^k;
+0007     [ Q ] = <a href="milnes_rule.html" class="code" title="function [ Q ] = milnes_rule( f,a,b )">milnes_rule</a>( f,a,b );
+0008     disp([<span class="string">'Milne'</span>,char(39),<span class="string">'s rule for x^'</span>, num2str(k), <span class="string">' on [-1,1] is '</span>, num2str(Q)]);
+0009 <span class="keyword">end</span>
+0010 f = @sin;
+0011 [ Q ] = <a href="milnes_rule.html" class="code" title="function [ Q ] = milnes_rule( f,a,b )">milnes_rule</a>( f,a,b );
+0012 disp([<span class="string">'Milne'</span>,char(39),<span class="string">'s rule for '</span>, func2str(f), <span class="string">' on [-1,1] is '</span>, num2str(Q)]);
+0013 f = @cos;
+0014 [ Q ] = <a href="milnes_rule.html" class="code" title="function [ Q ] = milnes_rule( f,a,b )">milnes_rule</a>( f,a,b );
+0015 disp([<span class="string">'Milne'</span>,char(39),<span class="string">'s rule for '</span>, func2str(f), <span class="string">' on [-1,1] is '</span>, num2str(Q)]);
+0016 f = @exp;
+0017 [ Q ] = <a href="milnes_rule.html" class="code" title="function [ Q ] = milnes_rule( f,a,b )">milnes_rule</a>( f,a,b );
+0018 disp([<span class="string">'Milne'</span>,char(39),<span class="string">'s rule for '</span>, func2str(f), <span class="string">' on [-1,1] is '</span>, num2str(Q)]);
+0019 f = @(x) 1/x;
+0020 [ Q ] = <a href="milnes_rule.html" class="code" title="function [ Q ] = milnes_rule( f,a,b )">milnes_rule</a>( f,a,b );
+0021 disp([<span class="string">'Milne'</span>,char(39),<span class="string">'s rule for '</span>, func2str(f), <span class="string">' on [-1,1] is '</span>, num2str(Q)]);
+0022 f = @(x) 1/(1+x);
+0023 [ Q ] = <a href="milnes_rule.html" class="code" title="function [ Q ] = milnes_rule( f,a,b )">milnes_rule</a>( f,a,b );
+0024 disp([<span class="string">'Milne'</span>,char(39),<span class="string">'s 3/8 rule for '</span>, func2str(f), <span class="string">' on [-1,1] is '</span>, num2str(Q)]);</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

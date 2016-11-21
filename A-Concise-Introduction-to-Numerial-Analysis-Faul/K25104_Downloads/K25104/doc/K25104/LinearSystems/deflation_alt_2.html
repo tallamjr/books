@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of deflation_alt_2</title>
+  <meta name="keywords" content="deflation_alt_2">
+  <meta name="description" content="Given an nxn matrix A which has a 2-dimensional eigenspace">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">LinearSystems</a> &gt; deflation_alt_2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\LinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>deflation_alt_2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Given an nxn matrix A which has a 2-dimensional eigenspace</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ D ] = deflation_alt_2( A,v1,v2 ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Given an nxn matrix A which has a 2-dimensional eigenspace 
+   spanned by v1 and v2, the function performs deflation creating 
+   an nxn matrix which is similar to A. That is it has the same 
+   eigenvalues as A. Uses an alternative algorithm.
+ Input arguments:
+   A, square matrix
+   v1,v2, two vectors which span a known eigenspace of A
+ Output arguments:
+   D, deflated matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="deflation_alt_2_script.html" class="code" title="">deflation_alt_2_script</a>	Usage example for deflation_alt_2</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ D ] = deflation_alt_2( A,v1,v2 )</a>
+0002 <span class="comment">% Given an nxn matrix A which has a 2-dimensional eigenspace</span>
+0003 <span class="comment">%   spanned by v1 and v2, the function performs deflation creating</span>
+0004 <span class="comment">%   an nxn matrix which is similar to A. That is it has the same</span>
+0005 <span class="comment">%   eigenvalues as A. Uses an alternative algorithm.</span>
+0006 <span class="comment">% Input arguments:</span>
+0007 <span class="comment">%   A, square matrix</span>
+0008 <span class="comment">%   v1,v2, two vectors which span a known eigenspace of A</span>
+0009 <span class="comment">% Output arguments:</span>
+0010 <span class="comment">%   D, deflated matrix</span>
+0011 
+0012 [n,m]=size(A);      <span class="comment">% finding the size of A</span>
+0013 [p,q]=size(v1);     <span class="comment">% finding the size of v1</span>
+0014 [r,s]=size(v2);     <span class="comment">% finding the size of v2</span>
+0015 <span class="keyword">if</span> n~= m;
+0016     error(<span class="string">'input is not a square matrix'</span>);
+0017 <span class="keyword">elseif</span> p~=n || q~=1 || r~=n || s~=1;
+0018     error(<span class="string">'input dimensions do not agree'</span>);
+0019 <span class="keyword">end</span>
+0020 
+0021 <span class="comment">% find index of first nonzero entry in v1</span>
+0022 k1=1;
+0023 <span class="keyword">while</span> v1(k1)==0
+0024     k1=k1+1;
+0025 <span class="keyword">end</span>
+0026 <span class="keyword">if</span> k1&gt;n
+0027     error(<span class="string">'zero vector is invalid input'</span>);
+0028 <span class="keyword">end</span>
+0029 
+0030 <span class="comment">% find index of first nonzero entry in v2</span>
+0031 k2=1;
+0032 <span class="keyword">while</span> v2(k2)==0
+0033     k2=k2+1;
+0034 <span class="keyword">end</span>
+0035 <span class="keyword">if</span> k2&gt;n
+0036     error(<span class="string">'zero vector is invalid input'</span>);
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="keyword">if</span> k1&gt;1
+0040     <span class="keyword">if</span> k2&gt;1         <span class="comment">% first entry in v1 and v2 is zero</span>
+0041         P=eye(n);   <span class="comment">% generate permutation matrix such that</span>
+0042         P(1,1)=0;   <span class="comment">% first entry in P*v1 is non-zero</span>
+0043         P(1,k1)=1;
+0044         P(k1,1)=1;
+0045         P(k1,k1)=0;
+0046         v1 = P*v1;
+0047         v2 = P*v2;
+0048         A = P*A*P'; <span class="comment">% adjust A</span>
+0049     <span class="keyword">else</span>            <span class="comment">% first entry of v2 is non-zero, swap v1 and v2</span>
+0050         temp = v1;
+0051         v1 = v2;
+0052         v2 = temp;
+0053     <span class="keyword">end</span>
+0054 <span class="keyword">end</span>
+0055 
+0056 S1=eye(n);  <span class="comment">% initializing S1, to the nxn identity</span>
+0057 <span class="keyword">for</span> i=2:n;                 
+0058     S1(i,1)=-v1(i)/v1(1);   <span class="comment">% adjusting S1 so that the bottom n-1 entries</span>
+0059                             <span class="comment">% of S1*v1 are zero</span>
+0060 <span class="keyword">end</span>
+0061 S1_inv=2*eye(n)-S1; <span class="comment">% calculating the inverse of S1</span>
+0062 D = S1*A*S1_inv;
+0063 
+0064 v_hat=S1*v2;        <span class="comment">% initializing v_hat to S1*v2</span>
+0065 <span class="comment">% find index &gt;= 2 of first nonzero entry in v_hat</span>
+0066 k=2;
+0067 <span class="keyword">while</span> v_hat(k)==0
+0068     k=k+1;
+0069 <span class="keyword">end</span>
+0070 <span class="keyword">if</span> k&gt;n
+0071     error(<span class="string">'zero vector is invalid input'</span>);
+0072 <span class="keyword">end</span>
+0073 <span class="keyword">if</span> k&gt;2
+0074     P=eye(n);   <span class="comment">% generate permutation matrix such that</span>
+0075     P(2,2)=0;   <span class="comment">% first entry in P*v is non-zero</span>
+0076     P(2,k)=1;
+0077     P(k,2)=1;
+0078     P(k,k)=0;
+0079     v_hat = P*v_hat;
+0080     D = P*D*P'; <span class="comment">% adjust D</span>
+0081 <span class="keyword">end</span>
+0082 S_hat=eye(n-1); <span class="comment">% initializing S_hat to the (n-1)x(n-1) identity</span>
+0083 v_hat=v_hat(2:n);   <span class="comment">% letting v_hat be the lower n-1 entries of S1*v2</span>
+0084 <span class="keyword">for</span> i=2:n-1;                                                         
+0085     S_hat(i,1)=-v_hat(i)/v_hat(1);  <span class="comment">% adjusting S_hat such that the bottom</span>
+0086                                     <span class="comment">% n-2 entries of S_hat*v_hat are zero</span>
+0087 <span class="keyword">end</span>
+0088 S_hat_inv=2*eye(n-1)-S_hat; <span class="comment">% calculating inverse of S_hat</span>
+0089 
+0090 S2=eye(n);S2_inv=eye(n);    <span class="comment">% initializing S2, S2_inv to the nxn identity</span>
+0091 
+0092 S2(2:n,2:n)=S_hat;  <span class="comment">% setting the bottom-right (n-1)x(n-1) submatrix of S2</span>
+0093                     <span class="comment">% to S_hat, so that S2*(S1*v2) is a linear combination</span>
+0094                     <span class="comment">% of the first two standard basis vectors.</span>
+0095                     
+0096 S2_inv(2:n,2:n)=S_hat_inv;  <span class="comment">% calculating inverse of S2</span>
+0097 
+0098 D=S2*D*S2_inv;    <span class="comment">% generating deflated matrix</span>
+0099 
+0100 <span class="keyword">end</span>
+0101</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

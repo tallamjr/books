@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of explicit_multistep_script_1</title>
+  <meta name="keywords" content="explicit_multistep_script_1">
+  <meta name="description" content="Usage example for explicit_multistep">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">ODEs</a> &gt; explicit_multistep_script_1.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\ODEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>explicit_multistep_script_1
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Usage example for explicit_multistep</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Usage example for explicit_multistep
+ employing 3-step Adams-Bashforth method</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="explicit_multistep.html" class="code" title="function [ y,t,err ] = explicit_multistep( f,t0,y0,h,T,rho, sigma, analytic )">explicit_multistep</a>	Implements an explicit multistep method to solve y'=f.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% Usage example for explicit_multistep</span>
+0002 <span class="comment">% employing 3-step Adams-Bashforth method</span>
+0003 
+0004 f = @(t,y) -y/(1+t);
+0005 t0 = 0;
+0006 y0 = 1;
+0007 h = 0.1;
+0008 T = 1;
+0009 rho = [0; 0; -1; 1];
+0010 sigma = [5/12; -4/3; 23/12; 0];
+0011 analytic = @(t) 1./(1+t);
+0012 [ y,t,err ] = <a href="explicit_multistep.html" class="code" title="function [ y,t,err ] = explicit_multistep( f,t0,y0,h,T,rho, sigma, analytic )">explicit_multistep</a>( f,t0,y0,h,T,rho, sigma, analytic );
+0013 figure;
+0014 plot(t,y,<span class="string">'o'</span>);           
+0015 xlabel(<span class="string">'t'</span>);
+0016 ylabel(<span class="string">'y(t)'</span>);
+0017 hold on;
+0018 ezplot(analytic, [0 1]);
+0019 legend(<span class="string">'numerical'</span>,<span class="string">'analytic'</span>);
+0020 f = @(t,y) 2*y/(1+t);
+0021 analytic = @(t) (1+t).^2;
+0022 [ y,t,err ] = <a href="explicit_multistep.html" class="code" title="function [ y,t,err ] = explicit_multistep( f,t0,y0,h,T,rho, sigma, analytic )">explicit_multistep</a>( f,t0,y0,h,T,rho, sigma, analytic );
+0023 figure;
+0024 plot(t,y,<span class="string">'o'</span>);           
+0025 xlabel(<span class="string">'t'</span>);
+0026 ylabel(<span class="string">'y(t)'</span>);
+0027 hold on;
+0028 ezplot(analytic, [0 1]);
+0029 legend(<span class="string">'numerical'</span>,<span class="string">'analytic'</span>);
+0030 
+0031</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

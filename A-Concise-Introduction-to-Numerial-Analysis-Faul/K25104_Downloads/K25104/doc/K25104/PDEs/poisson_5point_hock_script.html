@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of poisson_5point_hock_script</title>
+  <meta name="keywords" content="poisson_5point_hock_script">
+  <meta name="description" content="Usage example for poisson_5point_hock">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">PDEs</a> &gt; poisson_5point_hock_script.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\PDEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>poisson_5point_hock_script
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Usage example for poisson_5point_hock</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Usage example for poisson_5point_hock</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="poisson_5point_hock.html" class="code" title="function [ soln, timer ] = poisson_5point_hock( f,g,a,b,N )">poisson_5point_hock</a>	Solves the poisson equation (grad^2)u(x,y)=f(x,y) on the 2D domain</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% Usage example for poisson_5point_hock</span>
+0002 
+0003 f = @(x,y) 1.25*exp(x+y/2);
+0004 g = @(x,y) exp(x+y/2);
+0005 a = 0;
+0006 b = 1;
+0007 N= 31;
+0008 [ soln, timer ] = <a href="poisson_5point_hock.html" class="code" title="function [ soln, timer ] = poisson_5point_hock( f,g,a,b,N )">poisson_5point_hock</a>( f,g,a,b,N );
+0009 h=(b-a)/(N+1);
+0010 X = 0:h:1;
+0011 Y = 0:h:1;
+0012 Z = zeros(N+2,N+2);
+0013 Z(1,:) = g(X,zeros(1,N+2));
+0014 Z(N+2,:) = g(X,ones(1,N+2));
+0015 Z(:,1) = g(zeros(1,N+2),Y);
+0016 Z(:,N+2) = g(ones(1,N+2),Y);
+0017 Z(2:N+1,2:N+1) = soln;
+0018 surf(X,Y,Z);</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

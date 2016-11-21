@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of transformed_preconditioned_CG</title>
+  <meta name="keywords" content="transformed_preconditioned_CG">
+  <meta name="description" content="Implements method of transformed, preconditioned conjugate gradients">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">LinearSystems</a> &gt; transformed_preconditioned_CG.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\LinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>transformed_preconditioned_CG
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Implements method of transformed, preconditioned conjugate gradients</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ x,k ] =  transformed_preconditioned_CG(A,b,P,tol ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Implements method of transformed, preconditioned conjugate gradients 
+   to find the solution of the system Ax=b.
+ Input arguments:
+   A, symmetric positive definite matrix
+   b, column vector
+   P, preconditioner, nonsingular matrix with the same 
+     dimensions as A.
+   tol, convergence is accepted when |Ax-b|&lt;tol
+ Output arguments:
+   x, solution to Ax=b
+   k, number of iterations</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="transformed_preconditioned_CG_script.html" class="code" title="">transformed_preconditioned_CG_script</a>	Usage example for transformed_preconditioned_CG</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ x,k ] =  transformed_preconditioned_CG(A,b,P,tol )</a>
+0002 <span class="comment">% Implements method of transformed, preconditioned conjugate gradients</span>
+0003 <span class="comment">%   to find the solution of the system Ax=b.</span>
+0004 <span class="comment">% Input arguments:</span>
+0005 <span class="comment">%   A, symmetric positive definite matrix</span>
+0006 <span class="comment">%   b, column vector</span>
+0007 <span class="comment">%   P, preconditioner, nonsingular matrix with the same</span>
+0008 <span class="comment">%     dimensions as A.</span>
+0009 <span class="comment">%   tol, convergence is accepted when |Ax-b|&lt;tol</span>
+0010 <span class="comment">% Output arguments:</span>
+0011 <span class="comment">%   x, solution to Ax=b</span>
+0012 <span class="comment">%   k, number of iterations</span>
+0013 
+0014 [n,m]=size(A); <span class="comment">% finding the size of A</span>
+0015 [p,q]=size(b); <span class="comment">% finding the size of b</span>
+0016 [i,j]=size(P); <span class="comment">% finding the size of P</span>
+0017 <span class="keyword">if</span> n~= m;
+0018     error(<span class="string">'first input is not a square matrix'</span>);
+0019 <span class="keyword">elseif</span> q~=1;
+0020     error(<span class="string">'second input is not a column vector'</span>);
+0021 <span class="keyword">elseif</span> p~=n || i~=n || j~=m;
+0022     error(<span class="string">'input dimensions do not agree'</span>);
+0023 <span class="keyword">elseif</span> tol&lt;=0;
+0024     error(<span class="string">'tolerance should be positive'</span>);
+0025 <span class="keyword">elseif</span> ~issymmetric(A);
+0026     error(<span class="string">'first input is not symmetric'</span>);
+0027 <span class="keyword">elseif</span> rank(P)&lt;n
+0028     error(<span class="string">'preconditioner is singular'</span>);
+0029 <span class="keyword">else</span>
+0030     [~,a] = chol(A);
+0031     <span class="keyword">if</span> a
+0032         error(<span class="string">'first input is not positive definite'</span>);
+0033     <span class="keyword">end</span>
+0034 <span class="keyword">end</span>
+0035 
+0036 y=zeros(n,1);   <span class="comment">% initialize y</span>
+0037 Q=P'*A*P;       <span class="comment">% it is expensive to calculate this product, so do it once</span>
+0038                 <span class="comment">% now and save the result for later</span>
+0039 r0=P'*b; d=r0;  <span class="comment">% initialize r0 and d</span>
+0040 k=0;            <span class="comment">% initialize counter</span>
+0041 
+0042 <span class="keyword">if</span> sqrt(r0'*r0)&lt;tol; <span class="comment">% if this is true then the zero vector is the solution</span>
+0043     <span class="keyword">return</span>;
+0044 <span class="keyword">else</span>                <span class="comment">% implement first step</span>
+0045     v=Q*d;           <span class="comment">% calculate this matrix-vector product, which will</span>
+0046                      <span class="comment">% be needed twice more</span>
+0047     w=r0'*r0/(d'*v); <span class="comment">% calculate step size in the descent direction</span>
+0048     y=y+w*d;         <span class="comment">% update x</span>
+0049     r1=r0-w*v;       <span class="comment">% update the residual</span>
+0050     k=k+1;           <span class="comment">% increment counter</span>
+0051 <span class="keyword">end</span>
+0052 
+0053 <span class="keyword">while</span> sqrt(r1'*r1)&gt;tol; <span class="comment">% repeat the following until convergence</span>
+0054     B=r1'*r1/(r0'*r0);  <span class="comment">% this choice of B ensures the search directions</span>
+0055                         <span class="comment">% are conjugate with respect to A. Note that to</span>
+0056                         <span class="comment">% calculate B we need both the current and</span>
+0057                         <span class="comment">% previous residual, so we must keep track of</span>
+0058                         <span class="comment">% both r0 and r1.</span>
+0059     d=r1+B*d;           <span class="comment">% update the search direction</span>
+0060     r0=r1;              <span class="comment">% update r0</span>
+0061     v=Q*d;              <span class="comment">% calculate this matrix-vector product, which will</span>
+0062                         <span class="comment">% be needed twice more</span>
+0063     w=r0'*r0/(d'*v);    <span class="comment">% calculate step size in the descent direction</span>
+0064     y=y+w*d;            <span class="comment">% update x</span>
+0065     r1=r0-w*v;          <span class="comment">% update r1</span>
+0066     k=k+1;              <span class="comment">% increment counter</span>
+0067 <span class="keyword">end</span>
+0068 
+0069 x=P*y;
+0070 
+0071 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

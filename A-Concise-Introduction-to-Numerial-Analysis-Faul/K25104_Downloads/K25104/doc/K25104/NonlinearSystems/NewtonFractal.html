@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of NewtonFractal</title>
+  <meta name="keywords" content="NewtonFractal">
+  <meta name="description" content="Calculates the basins of attractions when the Newton method for root">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">NonlinearSystems</a> &gt; NewtonFractal.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\NonlinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>NewtonFractal
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Calculates the basins of attractions when the Newton method for root</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function img = NewtonFractal(P) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calculates the basins of attractions when the Newton method for root
+   finding is used on a polynomial of degree at most 7.
+ Input arguments:
+   P, vector specifying the coefficents of the polynomial starting with 
+     the coefficient of the highest power
+ Output arguments:
+   img, each pixel is coloured according to the root it converges to and 
+     shaded by the number of iterations necessary, the more iterations, 
+     the darker shade</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="NewtonFractal_script.html" class="code" title="">NewtonFractal_script</a>	Usage example for NewtonFractal</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function img = NewtonFractal(P)</a>
+0002 <span class="comment">% Calculates the basins of attractions when the Newton method for root</span>
+0003 <span class="comment">%   finding is used on a polynomial of degree at most 7.</span>
+0004 <span class="comment">% Input arguments:</span>
+0005 <span class="comment">%   P, vector specifying the coefficents of the polynomial starting with</span>
+0006 <span class="comment">%     the coefficient of the highest power</span>
+0007 <span class="comment">% Output arguments:</span>
+0008 <span class="comment">%   img, each pixel is coloured according to the root it converges to and</span>
+0009 <span class="comment">%     shaded by the number of iterations necessary, the more iterations,</span>
+0010 <span class="comment">%     the darker shade</span>
+0011 
+0012 NITER = 100;        <span class="comment">% maximum number of iterations</span>
+0013 threshold = .001;   <span class="comment">% convergence criterion</span>
+0014 pixelnum = 1000;    <span class="comment">% resolution of image</span>
+0015 colorArr = [7,3];   <span class="comment">% seven colours specified by their RGB values</span>
+0016 <span class="comment">%RED</span>
+0017 colorArr(1,1) = 1;colorArr(1,2) = 0;colorArr(1,3) = 0;
+0018 <span class="comment">%GREEN</span>
+0019 colorArr(2,1) = 0;colorArr(2,2) = 1;colorArr(2,3) = 0;
+0020 <span class="comment">%BLUE</span>
+0021 colorArr(3,1) = 0;colorArr(3,2) = 0;colorArr(3,3) = 1;
+0022 <span class="comment">%YELLOW</span>
+0023 colorArr(4,1) = 1;colorArr(4,2) = 1;colorArr(4,3) = 0;
+0024 <span class="comment">%WHITE</span>
+0025 colorArr(5,1) = 1;colorArr(5,2) = 0;colorArr(5,3) = 1;
+0026 <span class="comment">%CYAN</span>
+0027 colorArr(6,1) = 0;colorArr(5,2) = 1;colorArr(5,3) = 1;
+0028 <span class="comment">%RED</span>
+0029 colorArr(7,1) = 1;colorArr(6,2) = 1;colorArr(6,3) = 1;
+0030 
+0031 <span class="comment">% generate grid over the square [-1, 1] x [-1, 1]</span>
+0032 [xs,ys] = meshgrid(linspace(-1,1,pixelnum), linspace(-1,1,pixelnum));
+0033 <span class="comment">% grid points interpreted as complex numbers, which is an array of</span>
+0034 <span class="comment">% length pixelnum * pixelnum</span>
+0035 solutions = xs(:) + 1i*ys(:);
+0036 <span class="comment">% array of indices of grid points under consideration</span>
+0037 select = 1:numel(xs);
+0038 <span class="comment">% for each grid point initialize the necessary number of iterations</span>
+0039 <span class="comment">% to the maximum</span>
+0040 niters = NITER*ones(numel(xs), 1);
+0041 
+0042 <span class="comment">% calculate the roots of the polynomial</span>
+0043 Proots = roots(P);
+0044 <span class="keyword">if</span> isempty(Proots)
+0045     disp(<span class="string">'Polynomial has no roots'</span>);
+0046     <span class="keyword">return</span>;
+0047 <span class="keyword">end</span>
+0048 <span class="comment">% calculate the coefficients of the derivative</span>
+0049 Pderivative = zeros(length(P) - 1,1);
+0050 <span class="keyword">for</span> it = 1:length(P)-1
+0051     Pderivative(it)=(length(P)-it)*P(it);
+0052 <span class="keyword">end</span>
+0053 
+0054 <span class="keyword">for</span> iteration = 1:NITER
+0055     <span class="comment">% each iteration considers the entire grid minus the grid points</span>
+0056     <span class="comment">% where convergence has occured</span>
+0057     oldi = solutions(select);
+0058 
+0059     <span class="comment">% in newton's method we have z_{i+1} = z_i - p(z_i) / p'(z_i)</span>
+0060     solutions(select) = oldi - polyval(P,oldi) <span class="keyword">...</span>
+0061         ./ polyval(Pderivative,oldi);
+0062 
+0063     <span class="comment">% check for convergence or NaN (in case of a division by zero)</span>
+0064     differ = (oldi - solutions(select));
+0065     <span class="comment">% logical array marking converged grid points</span>
+0066     converged = abs(differ) &lt; threshold;
+0067     <span class="comment">% logical array marking problematic grid points</span>
+0068     problematic = isnan(differ);
+0069 
+0070     <span class="comment">% if converence occured update the necessary number of iterations</span>
+0071     niters(select(converged)) = iteration;
+0072     <span class="comment">% for problematic grid points set the number of iterations to the</span>
+0073     <span class="comment">% maximum + 1</span>
+0074     niters(select(problematic)) = NITER+1;
+0075     <span class="comment">%remove indices of converged or problematic points</span>
+0076     select(converged | problematic) = [];
+0077 <span class="keyword">end</span>
+0078 
+0079 Max = max(niters);
+0080 niters = reshape(niters,size(xs));
+0081 solutions = reshape(solutions,size(xs));
+0082 
+0083 A = zeros(pixelnum, pixelnum);
+0084 B = uint8(round(A * 255));
+0085 RowCol = size(solutions);
+0086 rows = RowCol(1);
+0087 cols = RowCol(2);
+0088 <span class="keyword">for</span> i1 = 1:rows
+0089     <span class="keyword">for</span> i2 =1:cols
+0090         <span class="comment">% to which root did the method converge</span>
+0091         tmp = abs(repmat(solutions(i1,i2), size(Proots))-Proots);
+0092         rootIndex = find(tmp&lt;threshold);
+0093         <span class="keyword">if</span> ~isempty(rootIndex)
+0094         <span class="comment">% color associated with roots and rate of convergence</span>
+0095         B(i1,i2,1)=colorArr(rootIndex,1) * <span class="keyword">...</span>
+0096             (1-(niters(i1,i2)/(Max))) * 255;
+0097         B(i1,i2,2)=colorArr(rootIndex,2) * <span class="keyword">...</span>
+0098             (1-(niters(i1,i2)/(Max))) * 255;
+0099         B(i1,i2,3)=colorArr(rootIndex,3) * <span class="keyword">...</span>
+0100             (1-(niters(i1,i2)/(Max))) * 255;
+0101         <span class="keyword">end</span>
+0102     <span class="keyword">end</span>
+0103 <span class="keyword">end</span>
+0104 img = image(B);
+0105 axis off;
+0106 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of spline_pieces</title>
+  <meta name="keywords" content="spline_pieces">
+  <meta name="description" content="Calculates the coefficients of the polynomial pieces">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">Interpolation</a> &gt; spline_pieces.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\Interpolation&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>spline_pieces
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Calculates the coefficients of the polynomial pieces</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ coeffs ] = spline_pieces( nodes,values, derivs ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calculates the coefficients of the polynomial pieces 
+ which compose a cubic spline on each subinterval
+ Input arguments:
+   nodes, column vector holding the positions of the nodes
+   values, column vector holding function values at the nodes
+   derivs, column vector holding derivative values at the nodes
+ Output arguments:
+   coeffs, array holding the coefficients of the polynomial 
+     on each subinterval</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="cubic_spline.html" class="code" title="function [ y ] = cubic_spline( nodes,values,a,b,x )">cubic_spline</a>	Fits a cubic spline interpolant to the function at given nodes, and evaluates it at the specified points in x.</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ coeffs ] = spline_pieces( nodes,values, derivs )</a>
+0002 <span class="comment">% Calculates the coefficients of the polynomial pieces</span>
+0003 <span class="comment">% which compose a cubic spline on each subinterval</span>
+0004 <span class="comment">% Input arguments:</span>
+0005 <span class="comment">%   nodes, column vector holding the positions of the nodes</span>
+0006 <span class="comment">%   values, column vector holding function values at the nodes</span>
+0007 <span class="comment">%   derivs, column vector holding derivative values at the nodes</span>
+0008 <span class="comment">% Output arguments:</span>
+0009 <span class="comment">%   coeffs, array holding the coefficients of the polynomial</span>
+0010 <span class="comment">%     on each subinterval</span>
+0011 
+0012 [n,m]=size(nodes);      <span class="comment">% finding the size of nodes</span>
+0013 [p,q]=size(values);       <span class="comment">% finding the size of values</span>
+0014 [k,l]=size(derivs);     <span class="comment">% finding the sive of derivs</span>
+0015 <span class="keyword">if</span> m~=1 || q~=1 || l~=1
+0016     error(<span class="string">'inputs must be column vectors'</span>);
+0017 <span class="keyword">elseif</span> n~=p || n~=k
+0018     error(<span class="string">'input vectors must be the same length'</span>);
+0019 <span class="keyword">end</span>
+0020 
+0021 coeffs=zeros(n-1,4);    <span class="comment">% intialise array</span>
+0022 
+0023 coeffs(:,1)=values(1:n-1);
+0024 coeffs(:,2)=derivs(1:n-1);
+0025 <span class="keyword">for</span> j=1:n-1;
+0026     coeffs(j,3)=3*(values(j+1)-values(j))/((nodes(j+1)-nodes(j))^2)<span class="keyword">...</span>
+0027         -(2*derivs(j)+derivs(j+1))/(nodes(j+1)-nodes(j));
+0028     coeffs(j,4)=2*(values(j)-values(j+1))/((nodes(j+1)-nodes(j))^3)<span class="keyword">...</span>
+0029         +(derivs(j)+derivs(j+1))/((nodes(j+1)-nodes(j))^2);
+0030 <span class="keyword">end</span>
+0031 
+0032 <span class="keyword">end</span>
+0033</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

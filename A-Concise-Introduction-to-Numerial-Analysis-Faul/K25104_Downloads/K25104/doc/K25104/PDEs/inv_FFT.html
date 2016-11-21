@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of inv_FFT</title>
+  <meta name="keywords" content="inv_FFT">
+  <meta name="description" content="Computes the inverse discrete fourier transform of sequence x">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">PDEs</a> &gt; inv_FFT.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\PDEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>inv_FFT
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Computes the inverse discrete fourier transform of sequence x</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ y ] = inv_FFT( x ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Computes the inverse discrete fourier transform of sequence x
+ Input arguments:
+   x, row vector of length 2^n, where n is an integer value
+   y, inverse fourier transform.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="hockney_FFT.html" class="code" title="function [ u ] = hockney_FFT( a,b,c,d,f )">hockney_FFT</a>	Implements the Hockney algorithm with FFT to solve the block</li><li><a href="inv_FFT_script.html" class="code" title="">inv_FFT_script</a>	Usage example for inv_FFT</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ y ] = inv_FFT( x )</a>
+0002 <span class="comment">% Computes the inverse discrete fourier transform of sequence x</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   x, row vector of length 2^n, where n is an integer value</span>
+0005 <span class="comment">%   y, inverse fourier transform.</span>
+0006 
+0007 [b,a]=size(x);
+0008 <span class="keyword">if</span> b~=1;
+0009     error(<span class="string">'input must be a row vector'</span>);
+0010 <span class="keyword">end</span>
+0011 l=log2(a);
+0012 <span class="keyword">if</span> mod(l,1)~=0; 
+0013     error(<span class="string">'input must have length 2^n for some integer n'</span>);
+0014 <span class="keyword">end</span>
+0015 
+0016 A(1,:)=x;   <span class="comment">% initialise array</span>
+0017 
+0018 <span class="keyword">for</span> k=1:l-1;
+0019     p=2^(l-k+1);    <span class="comment">% length of vectors in current row</span>
+0020     q=2^(k-1);      <span class="comment">% number of vectors in current row</span>
+0021     <span class="keyword">for</span> n=1:q
+0022     A(2,p*(n-1)+1:(p/2)*(2*n-1))=A(1,p*(n-1)+1:2:p*n);  <span class="comment">% extract odd elements</span>
+0023     A(2,(p/2)*(2*n-1)+1:p*n)=A(1,p*(n-1)+2:2:p*n);  <span class="comment">% extract even elements</span>
+0024     <span class="keyword">end</span>
+0025     A(1,:)=A(2,:);
+0026 <span class="keyword">end</span>
+0027 
+0028 B(1,:)=A(1,:);  <span class="comment">% first row of B holds the ordered singletons</span>
+0029 
+0030 <span class="keyword">for</span> k=1:l;
+0031     w=exp((pi*1i)/(2^(k-1)));    <span class="comment">% save the relevant primitive root of unity</span>
+0032     p=2^(k-1);      <span class="comment">% length of vectors in current row</span>
+0033     q=2^(l-k+1);    <span class="comment">% number of vectors in current row</span>
+0034     <span class="keyword">for</span> n=1:q/2
+0035         left=B(1,p*(2*n-2)+1:p*(2*n-1));
+0036         right=B(1,p*(2*n-1)+1:p*2*n);
+0037    
+0038         B(1,2*p*(n-1)+1:2*p*n)=[left,left];
+0039         <span class="keyword">for</span> m=1:p;
+0040             B(1,2*p*(n-1)+m)=B(1,2*p*(n-1)+m)+right(m)*w^(m-1);
+0041             B(1,2*p*(n-1)+m+p)=B(1,2*p*(n-1)+m+p)+right(m)*w^(p+m-1);
+0042         <span class="keyword">end</span>
+0043     <span class="keyword">end</span>
+0044 <span class="keyword">end</span>
+0045 
+0046 y=B(1,:);
+0047 
+0048 <span class="keyword">end</span>
+0049</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

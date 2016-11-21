@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of multistep_order</title>
+  <meta name="keywords" content="multistep_order">
+  <meta name="description" content="Computes the order of the multistep method defined by the coefficients in rho and sigma.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">ODEs</a> &gt; multistep_order.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\ODEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>multistep_order
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Computes the order of the multistep method defined by the coefficients in rho and sigma.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ p ] = multistep_order( rho,sigma ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Computes the order of the multistep method defined by the coefficients in rho and sigma.
+ Input arguments:
+   rho, sigma, column vectors prescribing the method. 
+     The first element should contain the coefficient associated with l=0.
+ Output arguments:
+   p, order of the method</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="multistep_order_script_1.html" class="code" title="">multistep_order_script_1</a>	Usage example for multistep_order</li><li><a href="multistep_order_script_2.html" class="code" title="">multistep_order_script_2</a>	Usage example for multistep_order</li><li><a href="multistep_order_script_3.html" class="code" title="">multistep_order_script_3</a>	Usage example for multistep_order</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ p ] = multistep_order( rho,sigma )</a>
+0002 <span class="comment">% Computes the order of the multistep method defined by the coefficients in rho and sigma.</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   rho, sigma, column vectors prescribing the method.</span>
+0005 <span class="comment">%     The first element should contain the coefficient associated with l=0.</span>
+0006 <span class="comment">% Output arguments:</span>
+0007 <span class="comment">%   p, order of the method</span>
+0008 
+0009 <span class="comment">% check user inputs</span>
+0010 [n,m]=size(rho);    <span class="comment">% finding the size of rho</span>
+0011 [s,t]=size(sigma);  <span class="comment">% finding the size of sigma</span>
+0012 <span class="keyword">if</span> m~=1 || t~=1;
+0013     error(<span class="string">'inputs must be column vectors'</span>);
+0014 <span class="keyword">elseif</span> n~=s;
+0015     error(<span class="string">'input vectors must be the same length'</span>);
+0016 <span class="keyword">end</span>
+0017 
+0018 <span class="keyword">if</span> sum(rho)~=0;
+0019     disp([<span class="string">'first order condition not satisfied'</span>]);
+0020     p=0; <span class="keyword">return</span>;
+0021 <span class="keyword">end</span>
+0022 
+0023 k=1;    <span class="comment">% initialize k</span>
+0024 term=0; 
+0025 
+0026 <span class="keyword">while</span> term==0;
+0027     a=0; b=0;   <span class="comment">% initialize a,b</span>
+0028     <span class="keyword">for</span> l=0:s-1;
+0029         a=a+(l^k)*rho(l+1);
+0030         b=b+(l^(k-1))*sigma(l+1);
+0031     <span class="keyword">end</span>
+0032     b=k*b;
+0033     <span class="keyword">if</span> abs(a-b)&lt;1e-12;  <span class="comment">% not comparing to zero incase of rounding errors</span>
+0034         k=k+1;
+0035     <span class="keyword">else</span>
+0036         term=1;
+0037     <span class="keyword">end</span>
+0038 <span class="keyword">end</span>
+0039 
+0040 p=k-1;
+0041 
+0042 <span class="keyword">end</span>
+0043         
+0044</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

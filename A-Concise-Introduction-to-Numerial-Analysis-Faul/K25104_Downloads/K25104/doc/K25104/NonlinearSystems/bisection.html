@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of bisection</title>
+  <meta name="keywords" content="bisection">
+  <meta name="description" content="Implements bisection method to find a root, f(x)=0">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">NonlinearSystems</a> &gt; bisection.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\NonlinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>bisection
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Implements bisection method to find a root, f(x)=0</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ x,k ] = bisection( f,a,b,tol,max ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Implements bisection method to find a root, f(x)=0
+ Input arguments:
+   f, function handle or vector of polynomial coeffiencts
+   a,b, end points of initial interval containing a root
+   tol, tolerance
+   max, maximum number of iterations
+ Output arguments:
+   x, solution
+   k, number of iterations to convergence</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="bisection_script_1.html" class="code" title="">bisection_script_1</a>	Usage example for bisection</li><li><a href="bisection_script_2.html" class="code" title="">bisection_script_2</a>	Usage example for bisection</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ x,k ] = bisection( f,a,b,tol,max )</a>
+0002 <span class="comment">% Implements bisection method to find a root, f(x)=0</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   f, function handle or vector of polynomial coeffiencts</span>
+0005 <span class="comment">%   a,b, end points of initial interval containing a root</span>
+0006 <span class="comment">%   tol, tolerance</span>
+0007 <span class="comment">%   max, maximum number of iterations</span>
+0008 <span class="comment">% Output arguments:</span>
+0009 <span class="comment">%   x, solution</span>
+0010 <span class="comment">%   k, number of iterations to convergence</span>
+0011 
+0012 <span class="comment">% first check user inputs</span>
+0013 <span class="keyword">if</span> a&gt;=b;    
+0014     error(<span class="string">'specifed interval invalid'</span>);
+0015 <span class="keyword">elseif</span> tol&lt;=0;
+0016     error(<span class="string">'tolerance must be positive'</span>);
+0017 <span class="keyword">elseif</span> max&lt;=0;
+0018     error(<span class="string">'max must be positive'</span>);
+0019 <span class="keyword">elseif</span> isa(f,<span class="string">'function_handle'</span>);
+0020     <span class="comment">% do nothing</span>
+0021 <span class="keyword">elseif</span> isa(f,<span class="string">'double'</span>); 
+0022     [n,m]=size(f);  <span class="comment">% find the size of f</span>
+0023     <span class="keyword">if</span> n~=1 &amp;&amp; m~=1; <span class="comment">% then f is not a vector</span>
+0024         error([<span class="string">'input must be a function handle or vector holding '</span>,<span class="keyword">...</span>
+0025             <span class="string">'polynomial coefficients'</span>]);
+0026     <span class="keyword">else</span> 
+0027         v=poly2sym(f);  <span class="comment">% this converts the vector of coefficients to an</span>
+0028                         <span class="comment">% expression for the polynomial</span>
+0029         f=matlabFunction(v);    <span class="comment">% this converts the expression to a</span>
+0030                                 <span class="comment">% function handle</span>
+0031     <span class="keyword">end</span>
+0032 <span class="keyword">else</span>
+0033     error([<span class="string">'Input must be a function handle or vector holding '</span>,<span class="keyword">...</span>
+0034             <span class="string">'polynomial coefficients'</span>]);
+0035 <span class="keyword">end</span>
+0036 
+0037 <span class="comment">% start of algorithm</span>
+0038 fa=feval(f,a);  <span class="comment">% evaluate f(a)</span>
+0039 fb=feval(f,b);  <span class="comment">% evaluate f(b)</span>
+0040 k=0;            <span class="comment">% initialize counter</span>
+0041 
+0042 <span class="keyword">if</span> fa==0;           <span class="comment">% then a is a root</span>
+0043     x=a; <span class="keyword">return</span>;
+0044 <span class="keyword">elseif</span> fb==0;       <span class="comment">% then b is a root</span>
+0045     x=b; <span class="keyword">return</span>;    
+0046 <span class="keyword">elseif</span> fa*fb&gt;0;     <span class="comment">% then f(a),f(b) have the same sign</span>
+0047     error(<span class="string">'function values at endpoints have the same sign'</span>);
+0048 <span class="keyword">end</span>
+0049 
+0050 <span class="keyword">while</span> abs(fa)&gt;tol &amp;&amp; abs(fb)&gt;tol &amp;&amp; k&lt;=max;   
+0051     
+0052     m=(a+b)/2;      <span class="comment">% calculate midpoint, m</span>
+0053     fm=feval(f,m);  <span class="comment">% evaluate f(m)</span>
+0054     
+0055     <span class="keyword">if</span> fm==0;       <span class="comment">% then m is a root</span>
+0056         x=m; <span class="keyword">return</span>;
+0057     <span class="keyword">end</span>
+0058     
+0059     <span class="keyword">if</span> fm*fa&lt;0;     <span class="comment">% then f(a) and f(m) have opposite signs</span>
+0060         b=m;        <span class="comment">% update b</span>
+0061         fb=fm;      <span class="comment">% update f(b)</span>
+0062     <span class="keyword">else</span>            <span class="comment">% f(m) and f(b) have opposite signs</span>
+0063         a=m;        <span class="comment">% update a</span>
+0064         fa=fm;      <span class="comment">% update f(a)</span>
+0065     <span class="keyword">end</span>
+0066     
+0067     k=k+1;      <span class="comment">% increment counter</span>
+0068 <span class="keyword">end</span>
+0069 
+0070 <span class="keyword">if</span> abs(fa)&lt;tol;
+0071     x=a;        <span class="comment">% set x to a</span>
+0072 <span class="keyword">else</span>
+0073     x=b;        <span class="comment">% set x to b</span>
+0074 <span class="keyword">end</span>
+0075 
+0076 <span class="keyword">if</span> k==max+1;
+0077     disp(<span class="string">'maximum number of iteratons met'</span>);
+0078 <span class="keyword">end</span>
+0079 
+0080 <span class="keyword">end</span>
+0081</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

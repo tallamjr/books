@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of stencil_order</title>
+  <meta name="keywords" content="stencil_order">
+  <meta name="description" content="Ttaylor expands the numerical scheme prescribed by the stencil A.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">PDEs</a> &gt; stencil_order.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\PDEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>stencil_order
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Ttaylor expands the numerical scheme prescribed by the stencil A.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ final ] = stencil_order( A,order ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Ttaylor expands the numerical scheme prescribed by the stencil A.
+ Input arguments:
+   A, array holding the numerical stencil. The array should be a square 
+   or cube of odd side length. The centre element will be interpreted
+   as the centre of the stencil.
+   order, highest power of h in the output
+ Output arguments:
+   final, string holding the expansion of the scheme</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="stencil_order_script_1.html" class="code" title="">stencil_order_script_1</a>	Usage example for stencil_order</li><li><a href="stencil_order_script_2.html" class="code" title="">stencil_order_script_2</a>	Usage example for stencil_order</li><li><a href="stencil_order_script_3.html" class="code" title="">stencil_order_script_3</a>	Usage example for stencil_order</li><li><a href="stencil_order_script_4.html" class="code" title="">stencil_order_script_4</a>	Usage example for stencil_order</li><li><a href="stencil_order_script_5.html" class="code" title="">stencil_order_script_5</a>	Usage example for stencil_order</li><li><a href="stencil_order_script_6.html" class="code" title="">stencil_order_script_6</a>	Usage example for stencil_order</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ final ] = stencil_order( A,order )</a>
+0002 <span class="comment">% Ttaylor expands the numerical scheme prescribed by the stencil A.</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   A, array holding the numerical stencil. The array should be a square</span>
+0005 <span class="comment">%   or cube of odd side length. The centre element will be interpreted</span>
+0006 <span class="comment">%   as the centre of the stencil.</span>
+0007 <span class="comment">%   order, highest power of h in the output</span>
+0008 <span class="comment">% Output arguments:</span>
+0009 <span class="comment">%   final, string holding the expansion of the scheme</span>
+0010 
+0011 [m,n,l]=size(A);  <span class="comment">% find the size of A</span>
+0012 <span class="keyword">if</span> m~=n;
+0013     error(<span class="string">'input array must be square or cube'</span>);
+0014 <span class="keyword">elseif</span> mod(n,2)~=1;
+0015     error(<span class="string">'matrix must have odd side length'</span>);
+0016 <span class="keyword">elseif</span> mod(order,1)~=0;
+0017     error(<span class="string">'input order must be an integer value'</span>);
+0018 <span class="keyword">end</span>
+0019 
+0020 c=(n+1)/2;      <span class="comment">% find the centre index of the stencil</span>
+0021 syms Dx Dy Dz h;     <span class="comment">% create symbolic variables Dx,Dy, Dz and h</span>
+0022 e=0;        <span class="comment">% initilaize a symbolic variable to hold the error</span>
+0023 
+0024 order = order+1;
+0025 <span class="keyword">if</span> l==1;    <span class="comment">% if array is 2D</span>
+0026     <span class="keyword">for</span> i=1:n;
+0027         <span class="keyword">for</span> j=1:n;
+0028             tay=taylor(exp((i-c)*Dy*h+(j-c)*Dx*h),Dy,<span class="string">'order'</span>,order);
+0029             tay=taylor(tay,Dx,<span class="string">'order'</span>,order);
+0030             e=e+A(i,j)*tay;
+0031         <span class="keyword">end</span>
+0032     <span class="keyword">end</span>
+0033 <span class="keyword">elseif</span> l==n;    <span class="comment">% if array is 3D</span>
+0034     <span class="keyword">for</span> i=1:n;
+0035         <span class="keyword">for</span> j=1:n;
+0036             <span class="keyword">for</span> k=1:n;
+0037             tay=taylor(exp((i-c)*Dy*h+(j-c)*Dx*h+(k-c)*Dz*h),Dy,<span class="string">'order'</span>,order);
+0038             tay=taylor(tay,Dx,<span class="string">'order'</span>,order);
+0039             tay=taylor(tay,Dz,<span class="string">'order'</span>,order);
+0040             e=e+A(i,j,k)*tay;
+0041             <span class="keyword">end</span>
+0042         <span class="keyword">end</span>
+0043     <span class="keyword">end</span>
+0044 <span class="keyword">else</span>
+0045     error(<span class="string">'input array must be square or cube'</span>);
+0046 <span class="keyword">end</span>
+0047 
+0048 [cx,tx]=coeffs(e,h);
+0049 cx=flip(cx);
+0050 tx=flip(tx);
+0051 
+0052 final=blanks(1);
+0053 hind=1;
+0054 first=1;
+0055 <span class="keyword">for</span> k=1:order
+0056     <span class="comment">%temp=blanks(1);</span>
+0057     syms a;
+0058     a=k;
+0059     <span class="keyword">if</span> hind&lt;=length(cx);
+0060         <span class="keyword">if</span> isequaln(tx(hind),h^a);
+0061             temp1=char(h^a);
+0062             temp2=char(cx(hind));
+0063             <span class="keyword">if</span> first==1;
+0064                 final=strcat(final,temp1,<span class="string">'{'</span>,temp2,<span class="string">'}'</span>);
+0065                 first=0;
+0066             <span class="keyword">else</span>
+0067                 final=strcat(final,<span class="string">' +'</span>,temp1,<span class="string">'{'</span>,temp2,<span class="string">'}'</span>);
+0068             <span class="keyword">end</span>
+0069             hind=hind+1;
+0070         <span class="keyword">end</span>
+0071     <span class="keyword">end</span>
+0072 
+0073 <span class="keyword">end</span>
+0074 <span class="keyword">end</span>
+0075 
+0076 
+0077 
+0078</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

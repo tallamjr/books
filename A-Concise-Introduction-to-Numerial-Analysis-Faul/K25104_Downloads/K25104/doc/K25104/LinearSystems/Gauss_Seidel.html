@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Gauss_Seidel</title>
+  <meta name="keywords" content="Gauss_Seidel">
+  <meta name="description" content="Solves the linear system Ax=b iteratively using the Gauss-Seidel method.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">LinearSystems</a> &gt; Gauss_Seidel.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\LinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Gauss_Seidel
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Solves the linear system Ax=b iteratively using the Gauss-Seidel method.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ x,k,H,E ] = Gauss_Seidel( A,b,x0,w,imax ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Solves the linear system Ax=b iteratively using the Gauss-Seidel method.
+ Input arguments:
+   A, square matrix
+   b, column vector
+   x0, initial estimate of the solution
+   w, relaxation parameter ( w=1 gives unrelaxed iterations )
+   imax, maximum number of iterations
+ Output arguments:
+   x, solution
+   k, number of iterations
+   H, iteration matrix 
+   E, eigenvalues of the iteration matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Forward.html" class="code" title="function [x] = Forward(A,b)">Forward</a>	Solves the lower triangular system of equations Ax = b</li><li><a href="iteration_analysis.html" class="code" title="function [ H,E ] = iteration_analysis( C,B,w )">iteration_analysis</a>	Calculates the iteration matrix and its eigenvalues</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Gauss_Seidel_script.html" class="code" title="">Gauss_Seidel_script</a>	Usage example for Gauss_Seidel</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ x,k,H,E ] = Gauss_Seidel( A,b,x0,w,imax )</a>
+0002 <span class="comment">% Solves the linear system Ax=b iteratively using the Gauss-Seidel method.</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   A, square matrix</span>
+0005 <span class="comment">%   b, column vector</span>
+0006 <span class="comment">%   x0, initial estimate of the solution</span>
+0007 <span class="comment">%   w, relaxation parameter ( w=1 gives unrelaxed iterations )</span>
+0008 <span class="comment">%   imax, maximum number of iterations</span>
+0009 <span class="comment">% Output arguments:</span>
+0010 <span class="comment">%   x, solution</span>
+0011 <span class="comment">%   k, number of iterations</span>
+0012 <span class="comment">%   H, iteration matrix</span>
+0013 <span class="comment">%   E, eigenvalues of the iteration matrix</span>
+0014 
+0015 [m,n]=size(A);  <span class="comment">% find the size of A</span>
+0016 [p,q]=size(b);  <span class="comment">% find the size of b</span>
+0017 <span class="keyword">if</span> n~= m
+0018     error(<span class="string">'input is not a square matrix'</span>);
+0019 <span class="keyword">elseif</span> p~=m || q~=1;  
+0020     error(<span class="string">'input dimensions do not agree'</span>);
+0021 <span class="keyword">end</span>
+0022 
+0023 B=A;    <span class="comment">% initialize B to be A</span>
+0024 <span class="keyword">for</span> i=1:n;
+0025     <span class="keyword">for</span> j=1:i;
+0026         B(i,j)=0;   <span class="comment">% set B to be the strictly upper triangular part of A</span>
+0027     <span class="keyword">end</span>
+0028 <span class="keyword">end</span>
+0029 
+0030 J=A-B;  <span class="comment">% initialize J to be the lower triangular part of A.</span>
+0031 
+0032 y=-B*x0+b;  <span class="comment">% calculate matrix vector product on right hand side</span>
+0033 temp=<a href="Forward.html" class="code" title="function [x] = Forward(A,b)">Forward</a>(J,y);  <span class="comment">% solve the lower triangular system by forward</span>
+0034                         <span class="comment">% substitution.</span>
+0035 x1=w*temp+(1-w)*x0; <span class="comment">% implement relaxation</span>
+0036 k=1;    <span class="comment">% Set iteration counter to 1</span>
+0037 
+0038 <span class="keyword">while</span> (abs(x1-x0)&gt;1e-12) &amp; (k &lt;= imax); <span class="comment">% convergence if the approximations</span>
+0039                                      <span class="comment">% are close or the maximum number of</span>
+0040                                      <span class="comment">% iterations is reached</span>
+0041     x0=x1;  
+0042     y=-B*x0+b;      <span class="comment">% calculate matrix vector product on right hand side</span>
+0043     temp=<a href="Forward.html" class="code" title="function [x] = Forward(A,b)">Forward</a>(J,y);  <span class="comment">% solve the lower triangular system by forward</span>
+0044                         <span class="comment">% substitution.</span>
+0045     x1=w*temp+(1-w)*x0; <span class="comment">% implement relaxation</span>
+0046     k=k+1;          <span class="comment">% increment counter</span>
+0047 <span class="keyword">end</span>
+0048 x=x1;
+0049 
+0050 [H,E]=<a href="iteration_analysis.html" class="code" title="function [ H,E ] = iteration_analysis( C,B,w )">iteration_analysis</a>(J,B,w); <span class="comment">% this function calculates the iteration</span>
+0051                                  <span class="comment">% matrix and its eigenvalues for</span>
+0052                                  <span class="comment">% illustrative purposes.</span>
+0053 <span class="keyword">end</span>
+0054</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

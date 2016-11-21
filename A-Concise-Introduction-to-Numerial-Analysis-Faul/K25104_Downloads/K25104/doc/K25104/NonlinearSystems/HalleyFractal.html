@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of HalleyFractal</title>
+  <meta name="keywords" content="HalleyFractal">
+  <meta name="description" content="Calculates the basins of attractions when Halley's method">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">NonlinearSystems</a> &gt; HalleyFractal.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\NonlinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>HalleyFractal
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Calculates the basins of attractions when Halley's method</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function img = HalleyFractal(P) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calculates the basins of attractions when Halley's method
+   for root finding is used on a polynomial of degree at most 7.
+ Input arguments:
+   P, vector specifying the coefficents of the polynomial starting 
+     with the coefficient of the highest power
+ Output arguments:
+   img, each pixel is coloured according to the root it converges to 
+     and shaded by the number of iterations necessary, the 
+     more iterations, the darker shade</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="HalleyFractal_script.html" class="code" title="">HalleyFractal_script</a>	Usage example for HalleyFractal</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function img = HalleyFractal(P)</a>
+0002 <span class="comment">% Calculates the basins of attractions when Halley's method</span>
+0003 <span class="comment">%   for root finding is used on a polynomial of degree at most 7.</span>
+0004 <span class="comment">% Input arguments:</span>
+0005 <span class="comment">%   P, vector specifying the coefficents of the polynomial starting</span>
+0006 <span class="comment">%     with the coefficient of the highest power</span>
+0007 <span class="comment">% Output arguments:</span>
+0008 <span class="comment">%   img, each pixel is coloured according to the root it converges to</span>
+0009 <span class="comment">%     and shaded by the number of iterations necessary, the</span>
+0010 <span class="comment">%     more iterations, the darker shade</span>
+0011 
+0012 NITER = 100;        <span class="comment">% maximum number of iterations</span>
+0013 threshold = .001;   <span class="comment">% convergence criterion</span>
+0014 pixelnum = 800;     <span class="comment">% resolution of image</span>
+0015 colorArr = [7,3];   <span class="comment">% seven colours specified by their RGB values</span>
+0016 <span class="comment">%RED</span>
+0017 colorArr(1,1) = 1;colorArr(1,2) = 0;colorArr(1,3) = 0;
+0018 <span class="comment">%GREEN</span>
+0019 colorArr(2,1) = 0;colorArr(2,2) = 1;colorArr(2,3) = 0;
+0020 <span class="comment">%BLUE</span>
+0021 colorArr(3,1) = 0;colorArr(3,2) = 0;colorArr(3,3) = 1;
+0022 <span class="comment">%YELLOW</span>
+0023 colorArr(4,1) = 1;colorArr(4,2) = 1;colorArr(4,3) = 0;
+0024 <span class="comment">%WHITE</span>
+0025 colorArr(5,1) = 1;colorArr(5,2) = 0;colorArr(5,3) = 1;
+0026 <span class="comment">%CYAN</span>
+0027 colorArr(6,1) = 0;colorArr(5,2) = 1;colorArr(5,3) = 1;
+0028 <span class="comment">%RED</span>
+0029 colorArr(7,1) = 1;colorArr(6,2) = 1;colorArr(6,3) = 1;
+0030 
+0031 <span class="comment">% generate grid over the square [-1, 1] x [-1, 1]</span>
+0032 [xs,ys] = meshgrid(linspace(-1,1,pixelnum), linspace(-1,1,pixelnum));
+0033 <span class="comment">% grid points interpreted as complex numbers, which is an array of</span>
+0034 <span class="comment">%  lengthpixelnum * pixelnum</span>
+0035 solutions = xs(:) + 1i*ys(:);
+0036 <span class="comment">%array of indices of grid points under consideration</span>
+0037 select = 1:numel(xs);
+0038 <span class="comment">% for each grid point initialize the necessary number of iterations</span>
+0039 <span class="comment">% to the maximum</span>
+0040 niters = NITER*ones(numel(xs), 1);
+0041 
+0042 <span class="comment">% calculate the roots of the polynomial</span>
+0043 Proots = roots(P);
+0044 <span class="keyword">if</span> isempty(Proots)
+0045     disp(<span class="string">'Polynomial has no roots'</span>);
+0046     <span class="keyword">return</span>;
+0047 <span class="keyword">end</span>
+0048 
+0049 <span class="comment">% calculate the coefficients of the derivative</span>
+0050 Pderivative = zeros(length(P) - 1,1);
+0051 <span class="keyword">for</span> it = 1:length(P)-1
+0052     Pderivative(it)=(length(P)-it)*P(it);
+0053 <span class="keyword">end</span>
+0054 <span class="comment">% calculate the coefficients of the second derivative</span>
+0055 P2derivative = zeros(length(Pderivative) - 1,1);
+0056 <span class="keyword">for</span> it = 1:length(Pderivative)-1
+0057     P2derivative(it)=(length(Pderivative)-it)*Pderivative(it);
+0058 <span class="keyword">end</span>
+0059 
+0060 <span class="keyword">for</span> iteration = 1:NITER
+0061     <span class="comment">% each iteration considers the entire grid minus the grid pints</span>
+0062     <span class="comment">% where convergence has occured</span>
+0063     oldi = solutions(select);
+0064 
+0065     solutions(select) = oldi - 2 .* polyval(P,oldi) .* <span class="keyword">...</span>
+0066         polyval(Pderivative,oldi) ./ (2.*polyval(Pderivative,oldi).^2 <span class="keyword">...</span>
+0067         - polyval(P,oldi).*polyval(P2derivative,oldi));
+0068 
+0069     <span class="comment">%check for convergence or NaN</span>
+0070     differ = (oldi - solutions(select));
+0071     <span class="comment">%logical array marking converged grid points</span>
+0072     converged = abs(differ) &lt; threshold;
+0073     <span class="comment">%logical array marking problematic grid points</span>
+0074     problematic = isnan(differ);
+0075 
+0076     <span class="comment">% if converence occured update the necessary number of iterations</span>
+0077     niters(select(converged)) = iteration;
+0078     <span class="comment">% for problematic grid points set the number of iterations to the</span>
+0079     <span class="comment">% maximum + 1</span>
+0080     niters(select(problematic)) = NITER+1;
+0081     <span class="comment">%remove indices of converged or problematic points</span>
+0082     select(converged | problematic) = [];
+0083 <span class="keyword">end</span>
+0084 
+0085 Max = max(niters);
+0086 niters = reshape(niters,size(xs));
+0087 solutions = reshape(solutions,size(xs));
+0088 
+0089 A = zeros(pixelnum, pixelnum);
+0090 B = uint8(round(A * 255));
+0091 RowCol = size(solutions);
+0092 rows = RowCol(1);
+0093 cols = RowCol(2);
+0094 <span class="keyword">for</span> i1 = 1:rows
+0095     <span class="keyword">for</span> i2 =1:cols
+0096         <span class="comment">% to which root did the method converge</span>
+0097         tmp = abs(repmat(solutions(i1,i2), size(Proots))-Proots);
+0098         rootIndex = find(tmp&lt;threshold);
+0099         <span class="keyword">if</span> ~isempty(rootIndex)
+0100         <span class="comment">%color associated with roots and rate of convergence</span>
+0101         B(i1,i2,1)=colorArr(rootIndex,1) * <span class="keyword">...</span>
+0102             (1-(niters(i1,i2)/(Max))) * 255;
+0103         B(i1,i2,2)=colorArr(rootIndex,2) * <span class="keyword">...</span>
+0104             (1-(niters(i1,i2)/(Max))) * 255;
+0105         B(i1,i2,3)=colorArr(rootIndex,3) * <span class="keyword">...</span>
+0106             (1-(niters(i1,i2)/(Max))) * 255;
+0107         <span class="keyword">end</span>
+0108     <span class="keyword">end</span>
+0109 <span class="keyword">end</span>
+0110 img = image(B);
+0111 axis off;
+0112 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

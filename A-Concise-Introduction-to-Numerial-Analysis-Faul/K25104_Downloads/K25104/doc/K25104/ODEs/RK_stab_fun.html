@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of RK_stab_fun</title>
+  <meta name="keywords" content="RK_stab_fun">
+  <meta name="description" content="derives the stability function for the Runge-Kutta method prescribed by b,c,A">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">ODEs</a> &gt; RK_stab_fun.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\ODEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>RK_stab_fun
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>derives the stability function for the Runge-Kutta method prescribed by b,c,A</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ R ] = RK_stab_fun( b,c,A ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> derives the stability function for the Runge-Kutta method prescribed by b,c,A
+ Input arguments:
+   b, column vector holding the Runge-Kutta weights
+   c, column vector holding the Runge-Kutta nodes
+   A, matrix holding the coefficients a(i,j) which prescribe the method.
+ Output arguments:
+   R stability function</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="RK_stab_fun_script_1.html" class="code" title="">RK_stab_fun_script_1</a>	Usage example for RK_stab_fun</li><li><a href="RK_stab_fun_script_2.html" class="code" title="">RK_stab_fun_script_2</a>	Usage example for RK_stab_fun</li><li><a href="RK_stab_fun_script_3.html" class="code" title="">RK_stab_fun_script_3</a>	Usage example for RK_stab_fun</li><li><a href="RK_stab_fun_script_4.html" class="code" title="">RK_stab_fun_script_4</a>	Usage example for RK_stab_fun</li><li><a href="RK_stab_fun_script_5.html" class="code" title="">RK_stab_fun_script_5</a>	Usage example for RK_stab_fun</li><li><a href="RK_stab_fun_script_6.html" class="code" title="">RK_stab_fun_script_6</a>	Usage example for RK_stab_fun</li><li><a href="RK_stab_fun_script_7.html" class="code" title="">RK_stab_fun_script_7</a>	Usage example for RK_stab_fun</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ R ] = RK_stab_fun( b,c,A )</a>
+0002 <span class="comment">% derives the stability function for the Runge-Kutta method prescribed by b,c,A</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   b, column vector holding the Runge-Kutta weights</span>
+0005 <span class="comment">%   c, column vector holding the Runge-Kutta nodes</span>
+0006 <span class="comment">%   A, matrix holding the coefficients a(i,j) which prescribe the method.</span>
+0007 <span class="comment">% Output arguments:</span>
+0008 <span class="comment">%   R stability function</span>
+0009 
+0010 <span class="comment">% first check user inputs</span>
+0011 [Arows,Acols]=size(A);
+0012 [brows,bcols]=size(b);
+0013 [crows,ccols]=size(c);
+0014 <span class="keyword">if</span> Arows~=Acols;    
+0015     error(<span class="string">'matrix must be a square matrix'</span>);
+0016 <span class="keyword">elseif</span> bcols~=1 || ccols~=1;
+0017     error(<span class="string">'input must be column vectors'</span>);
+0018 <span class="keyword">elseif</span> brows~=Arows || crows~=Arows;
+0019     error(<span class="string">'dimensions do not match'</span>);
+0020 <span class="keyword">end</span>
+0021 
+0022 syms z      <span class="comment">% create symbolic variable</span>
+0023 R=1+z*b'*inv(eye(Acols)-z*A)*ones(Acols,1); <span class="comment">% construct stability function</span>
+0024 <span class="keyword">end</span>
+0025</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

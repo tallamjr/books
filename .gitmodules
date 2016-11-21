@@ -1,0 +1,6 @@
+[submodule "Python-DataScience-Handbook-Vanderplas/PythonDataScienceHandbook"]
+	path = Python-DataScience-Handbook-Vanderplas/PythonDataScienceHandbook
+	url = https://github.com/jakevdp/PythonDataScienceHandbook.git
+[submodule "Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers"]
+	path = Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers
+	url = https://github.com/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers.git

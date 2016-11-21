@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Givens</title>
+  <meta name="keywords" content="Givens">
+  <meta name="description" content="Applies one Givens rotation to place a zero in the (i,j)th entry of A.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">LinearSystems</a> &gt; Givens.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\LinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Givens
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Applies one Givens rotation to place a zero in the (i,j)th entry of A.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ B,G ] = Givens( A,i,j ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Applies one Givens rotation to place a zero in the (i,j)th entry of A.
+ Input arguments:
+   A, matrix
+   i, row index
+   j, column index, j&lt;i
+ Output arguments:
+   G, Givens rotation
+   B, B = G*A</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Givens_script.html" class="code" title="">Givens_script</a>	Usage example for Givens</li><li><a href="QR_Givens.html" class="code" title="function [ Q,R ] = QR_Givens( A )">QR_Givens</a>	Computes the QR factorization of A via Givens rotations</li><li><a href="QR_Givens_zeros.html" class="code" title="function [ Q,R ] = QR_Givens_zeros( A,v )">QR_Givens_zeros</a>	Computes the QR factorization of A via Givens rotations</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ B,G ] = Givens( A,i,j )</a>
+0002 <span class="comment">% Applies one Givens rotation to place a zero in the (i,j)th entry of A.</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   A, matrix</span>
+0005 <span class="comment">%   i, row index</span>
+0006 <span class="comment">%   j, column index, j&lt;i</span>
+0007 <span class="comment">% Output arguments:</span>
+0008 <span class="comment">%   G, Givens rotation</span>
+0009 <span class="comment">%   B, B = G*A</span>
+0010 
+0011 [n,~]=size(A); <span class="comment">% finding the size of A</span>
+0012 <span class="keyword">if</span> i&gt;n || j&gt;n || j&gt;=i;   <span class="comment">% Check that the indices specify an element of A</span>
+0013     error(<span class="string">'element specified by the indices is not below the diagonal'</span>);
+0014 <span class="keyword">end</span>
+0015 
+0016 G=eye(n); B=A; <span class="comment">% initializing G to the identity and B to A</span>
+0017 
+0018 <span class="keyword">if</span> abs(A(i,j))&gt;0    <span class="comment">% only apply Givens rotation if A(i,j) is non-zero</span>
+0019                     <span class="comment">% otherwise no action necessary</span>
+0020     s=A(i,j)/sqrt(A(i,j)^2 + A(j,j)^2); <span class="comment">% calculating the sine and cosine</span>
+0021     c=A(j,j)/sqrt(A(i,j)^2 + A(j,j)^2);  
+0022     G(i,i)=c; G(j,j)=c;     <span class="comment">% creating the relevant Givens rotation</span>
+0023     G(i,j)=-s; G(j,i)=s;
+0024     B=G*B;      <span class="comment">% applying the Givens rotation</span>
+0025 <span class="keyword">end</span>
+0026 
+0027 <span class="keyword">end</span>
+0028</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Lagrangecardinal</title>
+  <meta name="keywords" content="Lagrangecardinal">
+  <meta name="description" content="Returns the k-th Lagrange cardinal polynomial for the given nodes">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">Interpolation</a> &gt; Lagrangecardinal.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\Interpolation&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Lagrangecardinal
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Returns the k-th Lagrange cardinal polynomial for the given nodes</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function L = Lagrangecardinal( nodes,k ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Returns the k-th Lagrange cardinal polynomial for the given nodes
+ Input arguments:
+   nodes, the interpolation nodes
+   k, integer specifying one of the nodes
+ Output arguments:
+   L, symbolic variable of the Lagrange polynomial</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../K25104/Integration/gauss_legendre_rule.html" class="code" title="function [ Q ] = gauss_legendre_rule( f,a,b,n )">gauss_legendre_rule</a>	Employs Gauss-Legendre rule to integrate f between a and b</li><li><a href="Lagrangecardinal_script.html" class="code" title="">Lagrangecardinal_script</a>	Usage example of Lagrangecardinal</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function L = Lagrangecardinal( nodes,k )</a>
+0002 <span class="comment">% Returns the k-th Lagrange cardinal polynomial for the given nodes</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   nodes, the interpolation nodes</span>
+0005 <span class="comment">%   k, integer specifying one of the nodes</span>
+0006 <span class="comment">% Output arguments:</span>
+0007 <span class="comment">%   L, symbolic variable of the Lagrange polynomial</span>
+0008 
+0009 [n,m]=size(nodes);  <span class="comment">% finding the size of nodes</span>
+0010 <span class="keyword">if</span> m~=1;
+0011     error(<span class="string">'input needs to be a column vector'</span>);
+0012 <span class="keyword">elseif</span> mod(k,1)~=0 || k&lt;=0 || k&gt;n; <span class="comment">% if k does not equal zero modulo 1</span>
+0013                             <span class="comment">% then it is not an integer value and it has to</span>
+0014                             <span class="comment">% specify a valid index</span>
+0015     error(<span class="string">'input must specify a valid index'</span>);
+0016 <span class="keyword">end</span>
+0017 syms x;     <span class="comment">% create a symbolic variable</span>
+0018 syms L; <span class="comment">% initialize symbolic variable to hold kth lagrange polynomial</span>
+0019 L=1;    <span class="comment">% set to unity</span>
+0020 <span class="keyword">for</span> j=1:n;
+0021     <span class="keyword">if</span> j==k;    
+0022         <span class="comment">% do nothing</span>
+0023     <span class="keyword">else</span>
+0024         L=L*(x-nodes(j))/(nodes(k)-nodes(j));   <span class="comment">% add another term to</span>
+0025                                                 <span class="comment">% the product</span>
+0026     <span class="keyword">end</span>
+0027 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

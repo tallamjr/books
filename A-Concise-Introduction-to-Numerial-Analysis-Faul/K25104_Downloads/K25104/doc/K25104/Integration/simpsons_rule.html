@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of simpsons_rule</title>
+  <meta name="keywords" content="simpsons_rule">
+  <meta name="description" content="Employs Simpson's rule to integrate f between a and b">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">Integration</a> &gt; simpsons_rule.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\Integration&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>simpsons_rule
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Employs Simpson's rule to integrate f between a and b</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ Q ] = simpsons_rule( f,a,b ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Employs Simpson's rule to integrate f between a and b
+ Input arguments:
+   f, function handle
+   a,b, integration bounds, a&lt;b
+ Output arguments:
+   Q, value of integral</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="composite_rule.html" class="code" title="function [ Q ] = composite_rule( f,a,b,n,m,rule )">composite_rule</a>	Splits the interval [a,b] into n equal subintervals, then numerically</li><li><a href="simpsons_rule_script.html" class="code" title="">simpsons_rule_script</a>	Usage example for simpsons_rule</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ Q ] = simpsons_rule( f,a,b )</a>
+0002 <span class="comment">% Employs Simpson's rule to integrate f between a and b</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   f, function handle</span>
+0005 <span class="comment">%   a,b, integration bounds, a&lt;b</span>
+0006 <span class="comment">% Output arguments:</span>
+0007 <span class="comment">%   Q, value of integral</span>
+0008 
+0009 <span class="comment">% first check user inputs</span>
+0010 <span class="keyword">if</span> isa(f,<span class="string">'function_handle'</span>)==0;
+0011     error(<span class="string">'input must be a function handle'</span>);
+0012 <span class="keyword">elseif</span> a&gt;=b;
+0013     error(<span class="string">'invalid interval'</span>);
+0014 <span class="keyword">end</span>
+0015 
+0016 fa=feval(f,a);          <span class="comment">% evaluate f(a)</span>
+0017 fm=feval(f,(a+b)/2);    <span class="comment">% evaluate f at the midpoint</span>
+0018 fb=feval(f,b);          <span class="comment">% evaluate f(b)</span>
+0019 
+0020 Q=(b-a)*(fa+4*fm+fb)/6; <span class="comment">% evaluate Q according to Simpson's rule</span>
+0021 
+0022 <span class="keyword">end</span>
+0023</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

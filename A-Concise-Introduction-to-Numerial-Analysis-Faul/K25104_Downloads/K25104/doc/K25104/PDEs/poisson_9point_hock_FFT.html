@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of poisson_9point_hock_FFT</title>
+  <meta name="keywords" content="poisson_9point_hock_FFT">
+  <meta name="description" content="Solves the Poisson equation (grad^2)u(x,y)=f(x,y) on the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">PDEs</a> &gt; poisson_9point_hock_FFT.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\PDEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>poisson_9point_hock_FFT
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Solves the Poisson equation (grad^2)u(x,y)=f(x,y) on the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ soln, timer ] = poisson_9point_hock_FFT( f,g,a,b,N ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Solves the Poisson equation (grad^2)u(x,y)=f(x,y) on the
+ 2D domain [a,b]x[a,b], with Dirichlet boundary condition u(x,y)=g(x,y) on
+ the boundary of the domain.  This is achieved by overlaying an  
+ equispaced grid containing N^2 interior points and applying the 9 point   
+ stencil. This function employs the Hockney method with FFT to solve the 
+ linear system arising from the application of the stencil, and
+ incorporates a timer so its speed can be compared with other solvers.
+ Input arguments:
+   f, function handle holding the source function
+   g, function handle prescribing boundary condition
+   a,b prescribing the domain
+   N, integer value prescribing the number of interior grid points in 
+     each direction.
+ Output arguments:
+   soln, array holding the solution values at each of the interior
+     grid points
+   timer, time elapsed for comparison with other methods</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="hockney_FFT.html" class="code" title="function [ u ] = hockney_FFT( a,b,c,d,f )">hockney_FFT</a>	Implements the Hockney algorithm with FFT to solve the block</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="poisson_9point_hock_FFT_script.html" class="code" title="">poisson_9point_hock_FFT_script</a>	Usage example for poisson_9point_hock_FFT</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ soln, timer ] = poisson_9point_hock_FFT( f,g,a,b,N )</a>
+0002 <span class="comment">% Solves the Poisson equation (grad^2)u(x,y)=f(x,y) on the</span>
+0003 <span class="comment">% 2D domain [a,b]x[a,b], with Dirichlet boundary condition u(x,y)=g(x,y) on</span>
+0004 <span class="comment">% the boundary of the domain.  This is achieved by overlaying an</span>
+0005 <span class="comment">% equispaced grid containing N^2 interior points and applying the 9 point</span>
+0006 <span class="comment">% stencil. This function employs the Hockney method with FFT to solve the</span>
+0007 <span class="comment">% linear system arising from the application of the stencil, and</span>
+0008 <span class="comment">% incorporates a timer so its speed can be compared with other solvers.</span>
+0009 <span class="comment">% Input arguments:</span>
+0010 <span class="comment">%   f, function handle holding the source function</span>
+0011 <span class="comment">%   g, function handle prescribing boundary condition</span>
+0012 <span class="comment">%   a,b prescribing the domain</span>
+0013 <span class="comment">%   N, integer value prescribing the number of interior grid points in</span>
+0014 <span class="comment">%     each direction.</span>
+0015 <span class="comment">% Output arguments:</span>
+0016 <span class="comment">%   soln, array holding the solution values at each of the interior</span>
+0017 <span class="comment">%     grid points</span>
+0018 <span class="comment">%   timer, time elapsed for comparison with other methods</span>
+0019 
+0020 <span class="comment">% first check user inputs</span>
+0021 <span class="keyword">if</span> isa(f,<span class="string">'function_handle'</span>)==0;
+0022     error(<span class="string">'f must be a function handle'</span>);
+0023 <span class="keyword">elseif</span> isa(g,<span class="string">'function_handle'</span>)==0;
+0024     error(<span class="string">'g must be a function handle'</span>);
+0025 <span class="keyword">elseif</span> a&gt;=b;
+0026     error(<span class="string">'must have a&lt;b'</span>);
+0027 <span class="keyword">elseif</span> mod(log2(N+1),1)~=0;
+0028     error(<span class="string">'to employ the FFT, (N+1) must be an integer power of 2'</span>);
+0029 <span class="keyword">end</span>
+0030 
+0031 h=(b-a)/(N+1);  <span class="comment">% store the value of h for hygiene</span>
+0032 
+0033 B=zeros(N);<span class="comment">% initialize array to hold the source function and boundary data</span>
+0034 <span class="comment">% fill B with the data from the source function on the grid</span>
+0035 <span class="keyword">for</span> j=1:N;
+0036     <span class="keyword">for</span> i=1:N;
+0037         B(i,j)=feval(f,a+i*h,a+j*h);
+0038     <span class="keyword">end</span>
+0039 <span class="keyword">end</span>
+0040 <span class="comment">% let y be a natural ordering of B</span>
+0041 y=B(:,1);
+0042 <span class="keyword">for</span> k=2:N;
+0043     y=vertcat(y,B(:,k));
+0044 <span class="keyword">end</span>
+0045 
+0046 y=y*(h^2);  <span class="comment">% scale y</span>
+0047 
+0048 <span class="comment">% incorporate boundary conditions at the left and right sides of the grid</span>
+0049 <span class="keyword">for</span> i=1:N;
+0050     y(i)=y(i)-(1/6)*feval(g,a,a+(i-1)*h)-(2/3)*feval(g,a,a+i*h)-(1/6)*feval(g,a,a+(i+1)*h);
+0051     y((N-1)*N+i)=y((N-1)*N+i)-(1/6)*feval(g,b,a+(i-1)*h)-(2/3)*feval(g,b,a+i*h)-(1/6)*feval(g,b,a+(i+1)*h);
+0052 <span class="keyword">end</span>
+0053 
+0054 <span class="comment">% incorporate boundary conditions on top and bottom sides of the grid</span>
+0055 <span class="keyword">for</span> j=1:N;
+0056     y((j-1)*N+1)=y((j-1)*N+1)-(1/6)*feval(g,a+(j-1)*h,a)-(2/3)*feval(g,a+j*h,a)-(1/6)*feval(g,a+(j+1)*h,a);
+0057     y(j*N)=y(j*N)-(1/6)*feval(g,a+(j-1)*h,b)-(2/3)*feval(g,a+j*h,b)-(1/6)*feval(g,a+(j+1)*h,b);
+0058 <span class="keyword">end</span>
+0059 
+0060 <span class="comment">% this point we've overcompensated on the corner elements, so fix this</span>
+0061 y(1)=y(1)+(1/6)*feval(g,a,a);
+0062 y(N)=y(N)+(1/6)*feval(g,a,b);
+0063 y(N*(N-1)+1)=y(N*(N-1)+1)+(1/6)*feval(g,b,a);
+0064 y(N*N)=y(N*N)+(1/6)*feval(g,b,b);
+0065 
+0066 tic;    <span class="comment">% start stopwatch</span>
+0067 
+0068 u=<a href="hockney_FFT.html" class="code" title="function [ u ] = hockney_FFT( a,b,c,d,f )">hockney_FFT</a>(-10/3,2/3,2/3,1/6,y);  <span class="comment">% solve block TST system by Hockney method</span>
+0069                              <span class="comment">% with FFT</span>
+0070 
+0071 soln(:,1)=u(1:N);    <span class="comment">% initialize first column of output</span>
+0072 
+0073 timer=toc;   <span class="comment">% stop stopwatch</span>
+0074 
+0075 <span class="comment">% reverse the natural ordering so soln is an array representing the N^2</span>
+0076 <span class="comment">% interior grid points.</span>
+0077 <span class="keyword">for</span> k=1:N-1;
+0078     soln=horzcat(soln,u(k*N+1:(k+1)*N));
+0079 <span class="keyword">end</span>
+0080 
+0081 <span class="keyword">end</span>
+0082 
+0083 
+0084</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

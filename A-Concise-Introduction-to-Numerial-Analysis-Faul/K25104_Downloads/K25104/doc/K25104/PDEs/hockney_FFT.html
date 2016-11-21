@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of hockney_FFT</title>
+  <meta name="keywords" content="hockney_FFT">
+  <meta name="description" content="Implements the Hockney algorithm with FFT to solve the block">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">PDEs</a> &gt; hockney_FFT.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\PDEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>hockney_FFT
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Implements the Hockney algorithm with FFT to solve the block</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ u ] = hockney_FFT( a,b,c,d,f ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Implements the Hockney algorithm with FFT to solve the block 
+ TST system Au=f.  
+ Input arguments a and b prescribe the diagonal and off diagonal 
+ terms respectively of NXN TST matrix B, c and d prescribe the diagonal  
+ and off diagonal terms respectively of NXN TST matrix C. A is then the 
+ (N^2)X(N^2) block TST matrix with B on the diagonal and C off diagonal.
+ Input argument f is a column vector holding the data on the right hand
+ side.
+ Input arguments:
+   a,b,c,d, Specifying diagonal entries
+   f, column vector holding the data on the right hand side. 
+ Output arguments:
+   u, vector holding the solution.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../K25104/LinearSystems/Backward.html" class="code" title="function [x]=Backward(A,b)">Backward</a>	Solves the upper triangular system of equations Ax = b</li><li><a href="../../K25104/LinearSystems/Forward.html" class="code" title="function [x] = Forward(A,b)">Forward</a>	Solves the lower triangular system of equations Ax = b</li><li><a href="inv_FFT.html" class="code" title="function [ y ] = inv_FFT( x )">inv_FFT</a>	Computes the inverse discrete fourier transform of sequence x</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="poisson_5point_hock_FFT.html" class="code" title="function [ soln, timer ] = poisson_5point_hock_FFT( f,g,a,b,N )">poisson_5point_hock_FFT</a>	Solves the poisson equation (grad^2)u(x,y)=f(x,y) on the</li><li><a href="poisson_9point_hock_FFT.html" class="code" title="function [ soln, timer ] = poisson_9point_hock_FFT( f,g,a,b,N )">poisson_9point_hock_FFT</a>	Solves the Poisson equation (grad^2)u(x,y)=f(x,y) on the</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ u ] = hockney_FFT( a,b,c,d,f )</a>
+0002 <span class="comment">% Implements the Hockney algorithm with FFT to solve the block</span>
+0003 <span class="comment">% TST system Au=f.</span>
+0004 <span class="comment">% Input arguments a and b prescribe the diagonal and off diagonal</span>
+0005 <span class="comment">% terms respectively of NXN TST matrix B, c and d prescribe the diagonal</span>
+0006 <span class="comment">% and off diagonal terms respectively of NXN TST matrix C. A is then the</span>
+0007 <span class="comment">% (N^2)X(N^2) block TST matrix with B on the diagonal and C off diagonal.</span>
+0008 <span class="comment">% Input argument f is a column vector holding the data on the right hand</span>
+0009 <span class="comment">% side.</span>
+0010 <span class="comment">% Input arguments:</span>
+0011 <span class="comment">%   a,b,c,d, Specifying diagonal entries</span>
+0012 <span class="comment">%   f, column vector holding the data on the right hand side.</span>
+0013 <span class="comment">% Output arguments:</span>
+0014 <span class="comment">%   u, vector holding the solution.</span>
+0015 
+0016 [n,M]=size(f);
+0017 <span class="keyword">if</span> M~=1;
+0018     error(<span class="string">'f must be a column vector'</span>);
+0019 <span class="keyword">end</span>
+0020 N=sqrt(n);
+0021 
+0022 <span class="comment">% form the N matrix vector products c=Qb using FFT. we will hold these in an NxN</span>
+0023 <span class="comment">% array rather than one long vector as this will make column/row reordering</span>
+0024 <span class="comment">% more intuitive</span>
+0025 C=[];    <span class="comment">% initialize array</span>
+0026 <span class="keyword">for</span> k=1:N;
+0027     u=f((k-1)*N+1:k*N)';   
+0028     u=horzcat(0,u,zeros(1,N+1));  <span class="comment">% extend the vector to make it consistent</span>
+0029                                   <span class="comment">% with the Fast Fourier Transform</span>
+0030     temp=<a href="inv_FFT.html" class="code" title="function [ y ] = inv_FFT( x )">inv_FFT</a>(u);              <span class="comment">% apply FFT</span>
+0031     temp=temp(2:N+1);             <span class="comment">% cut off unwanted parts</span>
+0032     temp=sqrt(2/(N+1))*imag(temp);  
+0033     temp=temp';
+0034     C=horzcat(C,temp);
+0035     clear temp;
+0036 <span class="keyword">end</span>
+0037 
+0038 <span class="comment">% rearrange columns to rows, this is as simple as applying a traspose</span>
+0039 C=C';
+0040 
+0041 <span class="comment">% we now need to solve the N uncoupled systems</span>
+0042 y=[];   <span class="comment">% initialize y to an empty array</span>
+0043 <span class="keyword">for</span> k=1:N;
+0044     <span class="comment">% first form the required TST matrix</span>
+0045     T=(a+2*b*cos(k*pi/(N+1)))*diag(ones(N,1))+<span class="keyword">...</span>
+0046         (c+2*d*cos(k*pi/(N+1)))*diag(ones(N-1,1),1)+<span class="keyword">...</span>
+0047         (c+2*d*cos(k*pi/(N+1)))*diag(ones(N-1,1),-1);
+0048     
+0049     L=eye(N);U=T;   <span class="comment">% initialize L,U</span>
+0050     <span class="comment">% find LU factorization of T by banded Gaussian elimination</span>
+0051     <span class="keyword">for</span> j=1:N-1;
+0052         temp=(U(j+1,j)/U(j,j));       <span class="comment">% eliminate elements below the diagonal</span>
+0053         U(j+1,:)=U(j+1,:)-U(j,:)*temp;  <span class="comment">% by subtracting a linear combination</span>
+0054                                     <span class="comment">% of rows</span>
+0055                                      
+0056         L(j+1,j)=temp;        <span class="comment">% construct L</span>
+0057     <span class="keyword">end</span> 
+0058     <span class="comment">% solve the linear system by back substitution utilizing the LU</span>
+0059     <span class="comment">% factorization</span>
+0060     U = U - tril(U,-1); <span class="comment">% remove rounding errors</span>
+0061     L = L - triu(L,1);
+0062     v=<a href="../../K25104/LinearSystems/Forward.html" class="code" title="function [x] = Forward(A,b)">Forward</a>(L,C(:,k));   
+0063     temp=<a href="../../K25104/LinearSystems/Backward.html" class="code" title="function [x]=Backward(A,b)">Backward</a>(U,v);    
+0064     y=horzcat(y,temp);
+0065 <span class="keyword">end</span>
+0066 
+0067 
+0068 u=[];   <span class="comment">% initialize array to hold solution</span>
+0069 <span class="keyword">for</span> k=1:N;
+0070     in=y(k,:);   
+0071     in=horzcat(0,in,zeros(1,N+1));  <span class="comment">% extend the vector to make it consistent</span>
+0072                                   <span class="comment">% with the Fast Fourier Transform</span>
+0073     temp=<a href="inv_FFT.html" class="code" title="function [ y ] = inv_FFT( x )">inv_FFT</a>(in);             <span class="comment">% apply FFT</span>
+0074     temp=temp(2:N+1);             <span class="comment">% cut off unwanted parts</span>
+0075     temp=sqrt(2/(N+1))*imag(temp);  
+0076     temp=temp';
+0077     u=vertcat(u,temp);
+0078     clear temp;
+0079 <span class="keyword">end</span>
+0080 <span class="comment">% note that u is a vector, in the context of fast Poisson solvers it can be</span>
+0081 <span class="comment">% interpreted as a natural ordering by columns of the solution on the grid.</span>
+0082 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

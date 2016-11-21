@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Gaussian_scaledpartial</title>
+  <meta name="keywords" content="Gaussian_scaledpartial">
+  <meta name="description" content="Performs Gaussian elimination with scaled partial pivoting on A">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">LinearSystems</a> &gt; Gaussian_scaledpartial.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\LinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Gaussian_scaledpartial
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Performs Gaussian elimination with scaled partial pivoting on A</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ U,c ] = Gaussian_scaledpartial( A,b ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Performs Gaussian elimination with scaled partial pivoting on A 
+   to transform the system Ax=b to Ux=c, where U is upper triangular.
+ Input arguments:
+   A, square matrix
+   b, column vector
+ Output arguments:
+   U, square, upper triangular matrix
+   c, column vector</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Gaussian_scaledpartial_script.html" class="code" title="">Gaussian_scaledpartial_script</a>	Usage example for Gaussian_scaledpartial</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ U,c ] = Gaussian_scaledpartial( A,b )</a>
+0002 <span class="comment">% Performs Gaussian elimination with scaled partial pivoting on A</span>
+0003 <span class="comment">%   to transform the system Ax=b to Ux=c, where U is upper triangular.</span>
+0004 <span class="comment">% Input arguments:</span>
+0005 <span class="comment">%   A, square matrix</span>
+0006 <span class="comment">%   b, column vector</span>
+0007 <span class="comment">% Output arguments:</span>
+0008 <span class="comment">%   U, square, upper triangular matrix</span>
+0009 <span class="comment">%   c, column vector</span>
+0010 
+0011 U=A; c=b;       <span class="comment">% initialize U,c</span>
+0012 <span class="comment">% check user inputs</span>
+0013 [m,n]=size(A); <span class="comment">% finding the size of A</span>
+0014 <span class="keyword">if</span> n~= m
+0015     error(<span class="string">'input is not a square matrix'</span>);
+0016 <span class="keyword">elseif</span> size(b,1) ~= n
+0017     error(<span class="string">'input dimensions do not match'</span>);
+0018 <span class="keyword">end</span>
+0019 
+0020 <span class="keyword">for</span> i=1:n;      <span class="comment">% considering the rows in turn</span>
+0021     temp1 = U(i:n,i);
+0022     <span class="keyword">for</span> k=i:n;
+0023         temp2 = max(abs(U(k,:))); <span class="comment">% greatest absolute value in each row</span>
+0024         <span class="keyword">if</span> temp2 &gt; 1e-12;   <span class="comment">% otherwise entire row close to zero</span>
+0025             temp1(k-i+1) = temp1(k-i+1)/temp2;
+0026         <span class="keyword">end</span>
+0027     <span class="keyword">end</span>
+0028     
+0029     <span class="comment">% element with the largest scaled value is chosen as pivot.</span>
+0030     [~,index]=max(abs(temp1)); 
+0031     <span class="comment">% adjust the index to make it relative to the whole matrix</span>
+0032     index=index+i-1;       
+0033     
+0034     P=eye(n);       <span class="comment">% create permutation matrix to interchange rows</span>
+0035     P(:,[index,i])=P(:,[i,index]);
+0036     U=P*U; c=P*c;   <span class="comment">% apply permutation to both sides</span>
+0037         
+0038     <span class="keyword">for</span> j=i+1:n;
+0039         temp=(U(j,i)/U(i,i));       <span class="comment">% eliminate elements below the diagonal</span>
+0040         U(j,:)=U(j,:)-U(i,:)*temp;  <span class="comment">% by subtracting a linear combination</span>
+0041                                     <span class="comment">% of rows</span>
+0042                                     
+0043         c(j)=c(j)-c(i)*temp;        <span class="comment">% perform the same row operation on the</span>
+0044                                     <span class="comment">% right hand side</span>
+0045     <span class="keyword">end</span>
+0046 <span class="keyword">end</span> 
+0047 
+0048 <span class="keyword">end</span>
+0049</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

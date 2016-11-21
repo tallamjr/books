@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of QR_Householder_1</title>
+  <meta name="keywords" content="QR_Householder_1">
+  <meta name="description" content="Computes the QR factorization of A via Householder reflections">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">LinearSystems</a> &gt; QR_Householder_1.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\LinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>QR_Householder_1
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Computes the QR factorization of A via Householder reflections</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ Q,R ] = QR_Householder_1( A ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Computes the QR factorization of A via Householder reflections
+ explicitly calculating the matrix of the Householder reflection
+ Input arguments:
+   A, matrix
+ Output arguments:
+   Q, square orthogonal matrix
+   R, upper triangular</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="QR_Householder_1_script.html" class="code" title="">QR_Householder_1_script</a>	Usage example for QR_Householder_1</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ Q,R ] = QR_Householder_1( A )</a>
+0002 <span class="comment">% Computes the QR factorization of A via Householder reflections</span>
+0003 <span class="comment">% explicitly calculating the matrix of the Householder reflection</span>
+0004 <span class="comment">% Input arguments:</span>
+0005 <span class="comment">%   A, matrix</span>
+0006 <span class="comment">% Output arguments:</span>
+0007 <span class="comment">%   Q, square orthogonal matrix</span>
+0008 <span class="comment">%   R, upper triangular</span>
+0009 
+0010 [n,m]=size(A);  <span class="comment">% finding the size of A</span>
+0011 
+0012 R=A; Q=eye(n);  <span class="comment">% initialize Q and R</span>
+0013 
+0014 <span class="comment">% considering the columns in turn</span>
+0015 <span class="keyword">for</span> j=1:min(n,m);
+0016     u=R(:,j);           <span class="comment">% initialize vector u to be jth column</span>
+0017     <span class="keyword">for</span> i=1:j-1;        <span class="comment">% set first j-1 entries of u to zero</span>
+0018         u(i)=0;
+0019     <span class="keyword">end</span>
+0020     <span class="keyword">if</span> u(j) == 0
+0021        u(j) = u(j)+norm(u);
+0022     <span class="keyword">else</span>
+0023        u(j)=u(j)+sign(u(j))*norm(u); <span class="comment">% set jth entry of u avoiding</span>
+0024                                      <span class="comment">% loss of significance</span>
+0025     <span class="keyword">end</span>
+0026     <span class="keyword">if</span> norm(u) == 0
+0027             H=eye(n);
+0028     <span class="keyword">else</span>
+0029             H=eye(n)-(2/norm(u)^2)*(u*u') ; <span class="comment">% form Householder reflection</span>
+0030     <span class="keyword">end</span>
+0031     R=H*R;      <span class="comment">% apply reflection</span>
+0032     Q=Q*H';     <span class="comment">% update Q by right multiplying by H transpose</span>
+0033 <span class="keyword">end</span>
+0034 <span class="keyword">end</span>
+0035 
+0036</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

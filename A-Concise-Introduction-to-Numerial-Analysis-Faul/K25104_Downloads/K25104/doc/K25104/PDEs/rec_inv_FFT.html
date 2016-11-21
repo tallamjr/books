@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of rec_inv_FFT</title>
+  <meta name="keywords" content="rec_inv_FFT">
+  <meta name="description" content="Computes the inverse discrete fourier transform of sequence x recursively">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">PDEs</a> &gt; rec_inv_FFT.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\PDEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>rec_inv_FFT
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Computes the inverse discrete fourier transform of sequence x recursively</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ y ] = rec_inv_FFT( x ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Computes the inverse discrete fourier transform of sequence x recursively
+ Input arguments:
+   x, row vector of length 2^n, where n is an integer value
+   y, inverse fourier transform.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="rec_inv_FFT.html" class="code" title="function [ y ] = rec_inv_FFT( x )">rec_inv_FFT</a>	Computes the inverse discrete fourier transform of sequence x recursively</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="rec_inv_FFT.html" class="code" title="function [ y ] = rec_inv_FFT( x )">rec_inv_FFT</a>	Computes the inverse discrete fourier transform of sequence x recursively</li><li><a href="rec_inv_FFT_script.html" class="code" title="">rec_inv_FFT_script</a>	Usage example for inv_FFT</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ y ] = rec_inv_FFT( x )</a>
+0002 <span class="comment">% Computes the inverse discrete fourier transform of sequence x recursively</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   x, row vector of length 2^n, where n is an integer value</span>
+0005 <span class="comment">%   y, inverse fourier transform.</span>
+0006 
+0007 [b,a]=size(x);
+0008 <span class="keyword">if</span> b~=1;
+0009     error(<span class="string">'input must be a row vector'</span>);
+0010 <span class="keyword">end</span>
+0011 l=log2(a);
+0012 <span class="keyword">if</span> mod(l,1)~=0; 
+0013     error(<span class="string">'input must have length 2^n for some integer n'</span>);
+0014 <span class="keyword">end</span>
+0015 
+0016 <span class="keyword">if</span> a==1;
+0017     y = x;
+0018 <span class="keyword">else</span>
+0019     e = x(1:2:a); <span class="comment">% extract even indices starting with 0</span>
+0020     o = x(2:2:a);  <span class="comment">% extract odd indices starting with 0</span>
+0021     e = <a href="rec_inv_FFT.html" class="code" title="function [ y ] = rec_inv_FFT( x )">rec_inv_FFT</a>(e);
+0022     o = <a href="rec_inv_FFT.html" class="code" title="function [ y ] = rec_inv_FFT( x )">rec_inv_FFT</a>(o);
+0023     ahalf = a/2;
+0024     w=exp(pi*1i/ahalf);    <span class="comment">% relevant primitive root of unity</span>
+0025     <span class="keyword">for</span> l=1:ahalf;
+0026         y(l) = e(l) + w^(l-1) * o(l);
+0027         y(l+ahalf) = e(l) - w^(l-1) * o(l);
+0028     <span class="keyword">end</span>
+0029 <span class="keyword">end</span>
+0030 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of boundary_locus_script_2</title>
+  <meta name="keywords" content="boundary_locus_script_2">
+  <meta name="description" content="Usage example for boundary_locus">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">ODEs</a> &gt; boundary_locus_script_2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\ODEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>boundary_locus_script_2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Usage example for boundary_locus</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Usage example for boundary_locus
+ related to the Theta methods</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="boundary_locus.html" class="code" title="function [ z ] = boundary_locus( rho,sigma,n )">boundary_locus</a>	Uses the boundary locus method to identify the boundary</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% Usage example for boundary_locus</span>
+0002 <span class="comment">% related to the Theta methods</span>
+0003 
+0004 n=100;
+0005 annotation(<span class="string">'textbox'</span>, [0 0.9 1 0.1], <span class="keyword">...</span>
+0006     <span class="string">'String'</span>, <span class="string">'Theta methods'</span>, <span class="keyword">...</span>
+0007     <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0008     <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span>
+0009     <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>, <span class="keyword">...</span>
+0010     <span class="string">'FontSize'</span>,12)
+0011 <span class="keyword">for</span> k=1:10
+0012     subplot(5,2,k);
+0013     theta = 1 - (k-1)/10;
+0014     rho = [1; -1];
+0015     sigma = [1 - theta; theta];
+0016     [ z ] = <a href="boundary_locus.html" class="code" title="function [ z ] = boundary_locus( rho,sigma,n )">boundary_locus</a>( rho,sigma,n );
+0017     plot(z);
+0018     title([<span class="string">'theta = '</span>, num2str(theta)]);
+0019     axis([-3 3 -3 3]);
+0020     grid on;
+0021 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

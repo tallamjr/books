@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of sinbysum</title>
+  <meta name="keywords" content="sinbysum">
+  <meta name="description" content="Approximates sin(x) by its expansion">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">Fundamentals</a> &gt; sinbysum.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\Fundamentals&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>sinbysum
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Approximates sin(x) by its expansion</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [res, abserr, relerr, n]= sinbysum(x, e) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Approximates sin(x) by its expansion
+ x input argument
+ e input argument for the stopping criterion
+ res final approximation
+ abserr final absolute error
+ relerr final relative error
+ n number of iterations needed to reach the stopping criterion</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="sinbysum_script.html" class="code" title="">sinbysum_script</a>	Usage example for sinbysum</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [res, abserr, relerr, n]= sinbysum(x, e)</a>
+0002 <span class="comment">% Approximates sin(x) by its expansion</span>
+0003 <span class="comment">% x input argument</span>
+0004 <span class="comment">% e input argument for the stopping criterion</span>
+0005 <span class="comment">% res final approximation</span>
+0006 <span class="comment">% abserr final absolute error</span>
+0007 <span class="comment">% relerr final relative error</span>
+0008 <span class="comment">% n number of iterations needed to reach the stopping criterion</span>
+0009 
+0010 res = x; <span class="comment">% initialize the result, for small values of x sin(x) is</span>
+0011          <span class="comment">% approximately x</span>
+0012 d = abs(x); <span class="comment">% d holds by how much the approximation has changed in</span>
+0013             <span class="comment">% one iteration in modulus</span>
+0014 n = 1; <span class="comment">% the iteration count is initialised to 1 since res =  x is</span>
+0015        <span class="comment">% the first approximation</span>
+0016 <span class="keyword">while</span> d &gt; e
+0017     n = n+1;
+0018     m = 2*n-1;
+0019     temp = x^(m)/factorial(m); <span class="comment">% element of the sum to be subtracted</span>
+0020                                <span class="comment">% or added</span>
+0021     d = abs(temp);
+0022     <span class="keyword">if</span> mod(n,2) == 0 <span class="comment">% even iteration number, we have to subtract</span>
+0023         res = res - temp;
+0024     <span class="keyword">else</span> <span class="comment">% odd iteration number, we have to add</span>
+0025         res = res + temp;
+0026     <span class="keyword">end</span>
+0027 <span class="keyword">end</span>
+0028 truesol = sin(x);
+0029 abserr = res - truesol;
+0030 <span class="keyword">if</span> abs(truesol) &gt; 1e-12 <span class="comment">% not comparing to zero because of possible</span>
+0031                         <span class="comment">% rounding errors</span>
+0032     relerr = abserr/truesol;
+0033 <span class="keyword">else</span>
+0034     disp(<span class="string">'relative error not computed, the solution is too small'</span>);
+0035 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

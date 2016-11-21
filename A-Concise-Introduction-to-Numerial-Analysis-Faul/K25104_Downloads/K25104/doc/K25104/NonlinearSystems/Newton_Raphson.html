@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Newton_Raphson</title>
+  <meta name="keywords" content="Newton_Raphson">
+  <meta name="description" content="Implements Newton method to find root of f(x)=0">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">NonlinearSystems</a> &gt; Newton_Raphson.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\NonlinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Newton_Raphson
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Implements Newton method to find root of f(x)=0</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ x,k ] = Newton_Raphson( f,initial,tol,max ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Implements Newton method to find root of f(x)=0
+ Input arguments:
+   f, function handle or vector of polynomial coefficients
+   initial, initial iterate
+   tol, tolerance
+   max, maximum number of iterations
+ Output arguments:
+   x, solution
+   k, number of iterations to convergence</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Newton_Raphson_script_1.html" class="code" title="">Newton_Raphson_script_1</a>	Usage example for Newton_Raphson</li><li><a href="Newton_Raphson_script_2.html" class="code" title="">Newton_Raphson_script_2</a>	Usage example for Newton_Raphson</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ x,k ] = Newton_Raphson( f,initial,tol,max )</a>
+0002 <span class="comment">% Implements Newton method to find root of f(x)=0</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   f, function handle or vector of polynomial coefficients</span>
+0005 <span class="comment">%   initial, initial iterate</span>
+0006 <span class="comment">%   tol, tolerance</span>
+0007 <span class="comment">%   max, maximum number of iterations</span>
+0008 <span class="comment">% Output arguments:</span>
+0009 <span class="comment">%   x, solution</span>
+0010 <span class="comment">%   k, number of iterations to convergence</span>
+0011 
+0012 <span class="comment">% first check user inputs</span>
+0013 <span class="keyword">if</span> tol&lt;=0;
+0014     error(<span class="string">'tolerance must be positive'</span>);
+0015 <span class="keyword">elseif</span> max&lt;=0;
+0016     error(<span class="string">'maximum number of iterations must be positive'</span>);
+0017 <span class="keyword">elseif</span> isa(f,<span class="string">'sym'</span>);
+0018     df = diff(f);
+0019     f = matlabFunction(f);
+0020     df = matlabFunction(df);
+0021 <span class="keyword">elseif</span> isa(f,<span class="string">'double'</span>); 
+0022     [n,m]=size(f);  <span class="comment">% find the size of f</span>
+0023     <span class="keyword">if</span> n~=1 &amp;&amp; m~=1; <span class="comment">% then f is not a vector</span>
+0024         error([<span class="string">'input must be a symbolic function or vector holding '</span>,<span class="keyword">...</span>
+0025             <span class="string">'polynomial coefficients'</span>]);
+0026     <span class="keyword">else</span> 
+0027         v=poly2sym(f);  <span class="comment">% this converts the vector of coefficients to an</span>
+0028                         <span class="comment">% expression for the polynomial</span>
+0029         df = diff(v);
+0030         f=matlabFunction(v);    <span class="comment">% this converts the expression to a</span>
+0031                                 <span class="comment">% function handle</span>
+0032         df = matlabFunction(df);
+0033     <span class="keyword">end</span>
+0034 <span class="keyword">else</span>
+0035     error([<span class="string">'input must be a symbolic function or vector holding '</span>,<span class="keyword">...</span>
+0036             <span class="string">'polynomial coefficients'</span>]);
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="comment">% start of algorithm</span>
+0040 x=zeros(max,1);         <span class="comment">% initialise vector to hold iterates</span>
+0041 x(1)=initial;           <span class="comment">% initialize x(1)</span>
+0042 fx=feval(f,x(1));       <span class="comment">% evaluate f(x)</span>
+0043 divx=feval(df,x(1));   <span class="comment">% evaluate f'(x)</span>
+0044 k=2;                <span class="comment">% initialize iteration counter</span>
+0045 l=0;    <span class="comment">% initialize another counter to check if iterates are diverging</span>
+0046 d0=0;   <span class="comment">% initialize d0 to zero</span>
+0047 
+0048 <span class="keyword">while</span> abs(fx)&gt;tol &amp;&amp; k&lt;=max   
+0049     
+0050     x(k)=x(k-1)-fx/divx;    <span class="comment">% update our estimate of the root</span>
+0051     
+0052     test=find(x(1:k-1)==x(k));
+0053     <span class="keyword">if</span> isempty(test)==0;    <span class="comment">% if our estimate of the root matches any of</span>
+0054                             <span class="comment">% the previous estimates then we fall into</span>
+0055                             <span class="comment">% an infinite loop</span>
+0056         disp(<span class="string">'algorithm fell into infinite loop'</span>);
+0057         x=x(1:k); <span class="keyword">return</span>;   <span class="comment">% return vector of iterates so far</span>
+0058     <span class="keyword">end</span>
+0059     
+0060     d1=abs(x(k)-x(k-1));    <span class="comment">% calculate d1</span>
+0061     <span class="keyword">if</span> d1&gt;d0;   <span class="comment">% then distance between succesive iterates is increasing</span>
+0062         l=l+1;  <span class="comment">% increment l</span>
+0063         <span class="keyword">if</span> l&gt;20;
+0064             disp(<span class="string">'distance between succesive iterates is increasing'</span>);
+0065             x=x(1:k); <span class="keyword">return</span>;   <span class="comment">% return vector of iterates so far</span>
+0066         <span class="keyword">end</span>
+0067     <span class="keyword">else</span>
+0068         l=0;    <span class="comment">% reset l</span>
+0069     <span class="keyword">end</span>
+0070     d0=d1;      <span class="comment">% update d0</span>
+0071 
+0072     fx=feval(f,x(k));       <span class="comment">% evaluate f(x)</span>
+0073     divx=feval(df,x(k));   <span class="comment">% evaluate f'(x)</span>
+0074     
+0075     <span class="keyword">if</span> abs(divx)&lt;1e-12;
+0076         disp(<span class="string">'denominator vanishes'</span>); 
+0077         x=x(1:k); <span class="keyword">return</span>;   <span class="comment">% return vector of iterates so far</span>
+0078     <span class="keyword">end</span>
+0079     
+0080     k=k+1;  <span class="comment">% increment counter</span>
+0081 <span class="keyword">end</span>
+0082 
+0083 <span class="keyword">if</span> k==max+1;
+0084     disp(<span class="string">'maximum number of iterations reached'</span>);
+0085 <span class="keyword">end</span>
+0086 x=x(k-1);    <span class="comment">% set x to the most recent iterate</span>
+0087 
+0088 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

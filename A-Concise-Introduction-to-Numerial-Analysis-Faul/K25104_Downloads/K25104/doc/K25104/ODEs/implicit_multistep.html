@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of implicit_multistep</title>
+  <meta name="keywords" content="implicit_multistep">
+  <meta name="description" content="Implements an implicit multistep method to solve y'=f.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">ODEs</a> &gt; implicit_multistep.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\ODEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>implicit_multistep
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Implements an implicit multistep method to solve y'=f.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ y,t,err ] = implicit_multistep( f,t0,y0,h,T,rho, sigma, analytic ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Implements an implicit multistep method to solve y'=f.
+ If the analytic solution is given, the error is calculated.
+ Input arguments:
+   f, function handle; f=@(t,y)()
+   t0, y0 initial conditions
+   h, step size
+   T, end time
+   rho, sigma, column vectors prescribing the method. 
+     The first element should contain the coefficient associated with l=0.
+   analytic (optional), function handle to the analytic solution; 
+     analytic=@(t)()
+ Output arguments:
+   y, vector of solution at times defined by t
+   t, vector of time steps
+   err, pointwise error. If the analytic solution is not provided, err will be empty</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="backward_euler.html" class="code" title="function [ y,t,err ] = backward_euler( f,t0,y0,h,T,analytic )">backward_euler</a>	Implements backward Euler method to solve y'=f.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="implicit_multistep_script_1.html" class="code" title="">implicit_multistep_script_1</a>	Usage example for implicit_multistep</li><li><a href="implicit_multistep_script_2.html" class="code" title="">implicit_multistep_script_2</a>	Usage example for implicit_multistep</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ y,t,err ] = implicit_multistep( f,t0,y0,h,T,rho, sigma, analytic )</a>
+0002 <span class="comment">% Implements an implicit multistep method to solve y'=f.</span>
+0003 <span class="comment">% If the analytic solution is given, the error is calculated.</span>
+0004 <span class="comment">% Input arguments:</span>
+0005 <span class="comment">%   f, function handle; f=@(t,y)()</span>
+0006 <span class="comment">%   t0, y0 initial conditions</span>
+0007 <span class="comment">%   h, step size</span>
+0008 <span class="comment">%   T, end time</span>
+0009 <span class="comment">%   rho, sigma, column vectors prescribing the method.</span>
+0010 <span class="comment">%     The first element should contain the coefficient associated with l=0.</span>
+0011 <span class="comment">%   analytic (optional), function handle to the analytic solution;</span>
+0012 <span class="comment">%     analytic=@(t)()</span>
+0013 <span class="comment">% Output arguments:</span>
+0014 <span class="comment">%   y, vector of solution at times defined by t</span>
+0015 <span class="comment">%   t, vector of time steps</span>
+0016 <span class="comment">%   err, pointwise error. If the analytic solution is not provided, err will be empty</span>
+0017 
+0018 <span class="comment">% check user input</span>
+0019 [n,m]=size(rho);    <span class="comment">% finding the size of rho</span>
+0020 [s,t]=size(sigma);  <span class="comment">% finding the size of sigma</span>
+0021 <span class="keyword">if</span> m~=1 || t~=1;
+0022     error(<span class="string">'inputs must be column vectors'</span>);
+0023 <span class="keyword">elseif</span> n~=s;
+0024     error(<span class="string">'inputs must be the same length'</span>);
+0025     <span class="comment">% the method is an (s-1)-step method</span>
+0026 <span class="keyword">elseif</span> isa(f,<span class="string">'function_handle'</span>)==0
+0027     error(<span class="string">'input must be a function handle'</span>);
+0028 <span class="keyword">elseif</span> h&lt;=0;    
+0029     error(<span class="string">'step size must be positive'</span>);
+0030 <span class="keyword">elseif</span> T&lt;=t0;
+0031     error(<span class="string">'invalid interval'</span>);
+0032 <span class="keyword">end</span>
+0033 
+0034 s1 = s-1; <span class="comment">% number of steps in the method</span>
+0035 n=ceil((T-t0)/h);   <span class="comment">% calculate the ceiling of (T-t0)/h.</span>
+0036                     <span class="comment">% This gives the number of steps</span>
+0037 t=linspace(t0,t0+h*n,n+1); t=t';    <span class="comment">% initialize vector of time steps</span>
+0038 y=zeros(n+1,1);     <span class="comment">% initialize vector to hold y values</span>
+0039 fy=zeros(s1,1);      <span class="comment">% holds function values at s time steps</span>
+0040 
+0041 <span class="comment">% Take first s-1 steps with a one step method.</span>
+0042 <span class="comment">% This is not necessary if it is a one step method.</span>
+0043 <span class="keyword">if</span> s&gt;1;
+0044     [a,b,~]=<a href="backward_euler.html" class="code" title="function [ y,t,err ] = backward_euler( f,t0,y0,h,T,analytic )">backward_euler</a>(f,t0,y0,h,t0+s1*h,analytic);
+0045     y(1:s1)=a(1:s1);
+0046     <span class="keyword">for</span> i=1:s1;
+0047         fy(i)=f(b(i),a(i));
+0048     <span class="keyword">end</span>
+0049 <span class="keyword">else</span>
+0050     y(1)=y0;
+0051     fy(1)=f(t0,y0);
+0052 <span class="keyword">end</span>
+0053 
+0054 <span class="keyword">for</span> k=0:n-s;
+0055     <span class="comment">% find next iterate as zero of a non-linear function</span>
+0056     g = @(x) rho(s)*x + (rho(1:s1)'*y(k+1:s1+k)) - <span class="keyword">...</span>
+0057         h*(sigma(1:s1)'*fy) - h*sigma(s)*f(t(s+k),x);
+0058     y(s+k)= fzero(g,y(s+k-1)); 
+0059     fy(1:s1-1)=fy(2:s1);
+0060     fy(s1)=f(t(s+k),y(s+k));
+0061 <span class="keyword">end</span>
+0062 
+0063 <span class="comment">% calculate error if possible</span>
+0064 err=[]; <span class="comment">% initialize err</span>
+0065 <span class="keyword">if</span> exist(<span class="string">'analytic'</span>)==1;
+0066     <span class="keyword">if</span> isa(analytic,<span class="string">'function_handle'</span>)==0;
+0067         disp(<span class="string">'analytic must be a function handle'</span>)
+0068         <span class="keyword">return</span>;
+0069     <span class="keyword">else</span>
+0070         true=analytic(t);
+0071         err=abs(true-y);
+0072     <span class="keyword">end</span>
+0073 <span class="keyword">end</span>
+0074 
+0075 <span class="keyword">end</span>
+0076</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

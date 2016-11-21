@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of LU_pivot</title>
+  <meta name="keywords" content="LU_pivot">
+  <meta name="description" content="Computes the LU factorization with partial pivoting">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">LinearSystems</a> &gt; LU_pivot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\LinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>LU_pivot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Computes the LU factorization with partial pivoting</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [L,U,P]=LU_pivot(A) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Computes the LU factorization with partial pivoting 
+   such that P * A = L * U
+ Input arguments:
+   A, square matrix
+ Output arguments:
+   L, square matrix of the same dimensions as A containing the lower
+     triangular portion of the LU factorization
+   U, square matrix of the same dimensions as A containing the upper
+     triangular portion of the LU factorization
+   P, square matrix of the same dimensions as A, a permutation matrix
+     representing row exchanges due to pivoting</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="inverse_iteration.html" class="code" title="function [ v,c,k ] = inverse_iteration( A,s,tol )">inverse_iteration</a>	Implements inverse iteration to find an eigenvalue of A</li><li><a href="LU_pivot_script.html" class="code" title="">LU_pivot_script</a>	Usage example for LU_pivot</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [L,U,P]=LU_pivot(A)</a>
+0002 <span class="comment">% Computes the LU factorization with partial pivoting</span>
+0003 <span class="comment">%   such that P * A = L * U</span>
+0004 <span class="comment">% Input arguments:</span>
+0005 <span class="comment">%   A, square matrix</span>
+0006 <span class="comment">% Output arguments:</span>
+0007 <span class="comment">%   L, square matrix of the same dimensions as A containing the lower</span>
+0008 <span class="comment">%     triangular portion of the LU factorization</span>
+0009 <span class="comment">%   U, square matrix of the same dimensions as A containing the upper</span>
+0010 <span class="comment">%     triangular portion of the LU factorization</span>
+0011 <span class="comment">%   P, square matrix of the same dimensions as A, a permutation matrix</span>
+0012 <span class="comment">%     representing row exchanges due to pivoting</span>
+0013 
+0014 [n,m]=size(A); <span class="comment">% finding the size of A</span>
+0015 <span class="keyword">if</span> n~= m
+0016     error(<span class="string">'input is not a square matrix'</span>);
+0017 <span class="keyword">end</span>
+0018 L=eye(n);   <span class="comment">% initializing L to the identity matrix</span>
+0019 P=L;        <span class="comment">% initializing P to the identity matrix</span>
+0020 U=A;        <span class="comment">% initializing U to be A</span>
+0021 <span class="keyword">for</span> k=1:n   <span class="comment">% loop calculates one column of L and one row of U at a time</span>
+0022     <span class="comment">% Note that U holds in its lower portion a modified portion of A</span>
+0023     [~, m]=max(abs(U(k:n,k)));  <span class="comment">% for the k-th column find the</span>
+0024                                     <span class="comment">% maximum element (in modulus)on or</span>
+0025                                     <span class="comment">% below the diagonal, its position</span>
+0026                                     <span class="comment">% on or below the diagonal is</span>
+0027                                     <span class="comment">% returned in m</span>
+0028     m=m+k-1; <span class="comment">% calculate the row index of the maximum element by</span>
+0029              <span class="comment">% adding the (k-1) elements above the diagonal</span>
+0030     <span class="comment">% if m = k, do nothing, because the maximum element is already on</span>
+0031     <span class="comment">% the diagonal</span>
+0032     <span class="keyword">if</span> m~=k
+0033         <span class="comment">% swap rows m and k in U</span>
+0034         temp=U(k,:);    <span class="comment">% temp holds the k-th row of U</span>
+0035         U(k,:)=U(m,:);  <span class="comment">% assign the m-th row of U to the k-th row of U</span>
+0036         U(m,:)=temp;    <span class="comment">% the m-th row of U becomes temp</span>
+0037         <span class="comment">% swap rows m and k in P</span>
+0038         temp=P(k,:);
+0039         P(k,:)=P(m,:);
+0040         P(m,:)=temp;
+0041         <span class="keyword">if</span> k &gt;= 2 <span class="comment">% swap rows m and k in the portion of L already</span>
+0042                   <span class="comment">% calculated</span>
+0043             temp=L(k,1:k-1);
+0044             L(k,1:k-1)=L(m,1:k-1);
+0045             L(m,1:k-1)=temp;
+0046         <span class="keyword">end</span>
+0047     <span class="keyword">end</span>
+0048     <span class="keyword">for</span> j=k+1:n
+0049         <span class="comment">% if U(k,k) = 0, do nothing, because L is already initialised</span>
+0050         <span class="comment">% to the identity matrix and thus the k-th column is the k-th</span>
+0051         <span class="comment">% standard basis vector</span>
+0052         <span class="keyword">if</span> abs(U(k,k)) &gt; 1e-12  <span class="comment">% not comparing to zero because of</span>
+0053                                 <span class="comment">% possible rounding errors</span>
+0054         L(j,k)=U(j,k)/U(k,k);   <span class="comment">% let L be the k-th column of the current</span>
+0055                                 <span class="comment">% U scaled by the diagonal element</span>
+0056         <span class="keyword">end</span>
+0057         U(j,:)=U(j,:)-L(j,k)*U(k,:); <span class="comment">% adust U by subtracting the outer</span>
+0058                                      <span class="comment">% product of of the k-th column of</span>
+0059                                      <span class="comment">% L and the k-th row of U</span>
+0060     <span class="keyword">end</span>
+0061 <span class="keyword">end</span>
+0062</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

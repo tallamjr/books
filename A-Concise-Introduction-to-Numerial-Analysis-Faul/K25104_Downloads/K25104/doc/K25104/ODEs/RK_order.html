@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of RK_order</title>
+  <meta name="keywords" content="RK_order">
+  <meta name="description" content="Identifies the order up to 4 of the Runge-Kutta scheme given by A,b,c.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">ODEs</a> &gt; RK_order.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\ODEs&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>RK_order
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Identifies the order up to 4 of the Runge-Kutta scheme given by A,b,c.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ p ] = RK_order( b,c,A ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Identifies the order up to 4 of the Runge-Kutta scheme given by A,b,c.
+ Input arguments:
+   b, column vector holding the Runge-Kutta weights
+   c, column vector holding the Runge-Kutta nodes
+   A, matrix holding the Runge-Kutta coefficients
+ Output arguments:
+   p, the order of the scheme up to 4.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="RK_order_script_1.html" class="code" title="">RK_order_script_1</a>	Usage example for RK_order</li><li><a href="RK_order_script_2.html" class="code" title="">RK_order_script_2</a>	Usage example for RK_order</li><li><a href="RK_order_script_3.html" class="code" title="">RK_order_script_3</a>	Usage example for RK_order</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ p ] = RK_order( b,c,A )</a>
+0002 <span class="comment">% Identifies the order up to 4 of the Runge-Kutta scheme given by A,b,c.</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   b, column vector holding the Runge-Kutta weights</span>
+0005 <span class="comment">%   c, column vector holding the Runge-Kutta nodes</span>
+0006 <span class="comment">%   A, matrix holding the Runge-Kutta coefficients</span>
+0007 <span class="comment">% Output arguments:</span>
+0008 <span class="comment">%   p, the order of the scheme up to 4.</span>
+0009 
+0010 <span class="comment">% check user inputs</span>
+0011 [Arows,Acols]=size(A);
+0012 [brows,bcols]=size(b);
+0013 [crows,ccols]=size(c);
+0014 <span class="keyword">if</span> Arows~=Acols;    
+0015     error(<span class="string">'input must be a square matrix'</span>);
+0016 <span class="keyword">elseif</span> bcols~=1 || ccols~=1;
+0017     error(<span class="string">'input must be column vectors'</span>);
+0018 <span class="keyword">elseif</span> brows~=Arows || crows~=Arows;
+0019     error(<span class="string">'input dimensions do not agree'</span>);
+0020 <span class="keyword">end</span>
+0021 
+0022 E=1e-12;    <span class="comment">% we use this as a small tolerance on either side of each</span>
+0023             <span class="comment">% condition, in case of possible rounding errors</span>
+0024 p=0;           
+0025 <span class="keyword">if</span> (sum(b)&gt;1-E) &amp;&amp; (sum(b)&lt;1+E);                    <span class="comment">% condition 1</span>
+0026     p=1;                    <span class="comment">% update p</span>
+0027     <span class="keyword">if</span> (b'*c&gt;1/2-E) &amp;&amp; (b'*c&lt;1/2+E);                <span class="comment">% condition 2</span>
+0028         p=2;                <span class="comment">% update p</span>
+0029         c2=c.^2;            <span class="comment">% '.^' performs element-wise exponentiation</span>
+0030         <span class="keyword">if</span> (b'*c2&gt;1/3-E) &amp;&amp; (b'*c2&lt;1/3+E);          <span class="comment">% condition 3</span>
+0031             <span class="keyword">if</span> (b'*A*c&gt;1/6-E) &amp;&amp; (b'*A*c&lt;1/6+E)     <span class="comment">% condition 4</span>
+0032                 p=3;        <span class="comment">% update p</span>
+0033             <span class="keyword">end</span>
+0034         <span class="keyword">else</span> <span class="keyword">return</span>; 
+0035         <span class="keyword">end</span>
+0036     <span class="keyword">else</span> <span class="keyword">return</span>; 
+0037     <span class="keyword">end</span>
+0038 <span class="keyword">else</span> <span class="keyword">return</span>; 
+0039 <span class="keyword">end</span>
+0040 
+0041 c3=c.^3;
+0042 <span class="keyword">if</span> (b'*c3&gt;1/4-E) &amp; (b'*c3&lt;1/4+E);                       <span class="comment">% condition 5</span>
+0043     bc=b.*c;                <span class="comment">% '.*' performs element-wise multiplication</span>
+0044     <span class="keyword">if</span> (bc'*A*c&gt;1/8-E) &amp;&amp; (bc'*A*c&lt;1/8+E);              <span class="comment">% condition 6</span>
+0045         <span class="keyword">if</span> (b'*A*c2&gt;1/12-E) &amp;&amp; (b'*A*c2&lt;1/12+E);        <span class="comment">% condition 7</span>
+0046             <span class="keyword">if</span> (b'*A*A*c&gt;1/24-E) &amp;&amp; (b'*A*A*c&lt;1/24+E)   <span class="comment">% condition 8</span>
+0047                 p=4;        <span class="comment">% update p</span>
+0048             <span class="keyword">end</span>
+0049         <span class="keyword">end</span>
+0050     <span class="keyword">end</span>
+0051 <span class="keyword">end</span>
+0052 
+0053 
+0054 <span class="keyword">end</span>
+0055</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

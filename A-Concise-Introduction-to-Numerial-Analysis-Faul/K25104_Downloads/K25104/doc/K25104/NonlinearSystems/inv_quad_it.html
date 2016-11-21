@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of inv_quad_it</title>
+  <meta name="keywords" content="inv_quad_it">
+  <meta name="description" content="Implements inverse quadratic interpolation method to find root of f(x)=0">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">NonlinearSystems</a> &gt; inv_quad_it.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\NonlinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>inv_quad_it
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Implements inverse quadratic interpolation method to find root of f(x)=0</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ x,k ] = inv_quad_it( f,x0,x1,x2,tol,max ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Implements inverse quadratic interpolation method to find root of f(x)=0
+ Input arguments:
+   f, function handle or vector of polynomial coefficients
+   x0,x1,x2, initial iterates
+   tol, tolerance
+   max, maximum number of iterations
+ Output arguments:
+   x, solution
+   k, number of iterations to convergence</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="inv_quad_it_script_1.html" class="code" title="">inv_quad_it_script_1</a>	Usage example for inv_quad_it</li><li><a href="inv_quad_it_script_2.html" class="code" title="">inv_quad_it_script_2</a>	Usage example for inv_quad_it</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ x,k ] = inv_quad_it( f,x0,x1,x2,tol,max )</a>
+0002 <span class="comment">% Implements inverse quadratic interpolation method to find root of f(x)=0</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   f, function handle or vector of polynomial coefficients</span>
+0005 <span class="comment">%   x0,x1,x2, initial iterates</span>
+0006 <span class="comment">%   tol, tolerance</span>
+0007 <span class="comment">%   max, maximum number of iterations</span>
+0008 <span class="comment">% Output arguments:</span>
+0009 <span class="comment">%   x, solution</span>
+0010 <span class="comment">%   k, number of iterations to convergence</span>
+0011 
+0012 <span class="comment">% first check user inputs</span>
+0013 <span class="keyword">if</span> tol&lt;=0;
+0014     error(<span class="string">'tolerance must be positive'</span>);
+0015 <span class="keyword">elseif</span> max&lt;=0;
+0016     error(<span class="string">'maximum number of iterations must be positive'</span>);
+0017 <span class="keyword">elseif</span> isa(f,<span class="string">'function_handle'</span>);
+0018     <span class="comment">% do nothing</span>
+0019 <span class="keyword">elseif</span> isa(f,<span class="string">'double'</span>); 
+0020     [n,m]=size(f);  <span class="comment">% find the size of f</span>
+0021     <span class="keyword">if</span> n~=1 &amp;&amp; m~=1; <span class="comment">% then f is not a vector</span>
+0022         error([<span class="string">'input must be a function handle or vector holding '</span>,<span class="keyword">...</span>
+0023             <span class="string">'polynomial coefficients'</span>]);
+0024     <span class="keyword">else</span> 
+0025         v=poly2sym(f);  <span class="comment">% this converts the vector of coefficients to an</span>
+0026                         <span class="comment">% expression for the polynomial</span>
+0027         f=matlabFunction(v);    <span class="comment">% this converts the expression to a</span>
+0028                                 <span class="comment">% function handle</span>
+0029     <span class="keyword">end</span>
+0030 <span class="keyword">else</span>
+0031     error([<span class="string">'f must be a function handle or vector holding '</span>,<span class="keyword">...</span>
+0032             <span class="string">'polynomial coefficients'</span>]);
+0033 <span class="keyword">end</span>
+0034 
+0035 <span class="comment">% start of algorithm</span>
+0036 x=zeros(max,1);     <span class="comment">% initialize vector to hold iterates</span>
+0037 x(1)=x0;x(2)=x1;x(3)=x2;      <span class="comment">% initialize first three iterates</span>
+0038 f0=feval(f,x(1));           <span class="comment">% evaluate f(x0)</span>
+0039 f1=feval(f,x(2));           <span class="comment">% evaluate f(x1)</span>
+0040 f2=feval(f,x(3));           <span class="comment">% evaluate f(x2)</span>
+0041 k=4;                <span class="comment">% initialize iteration counter</span>
+0042 l=0;    <span class="comment">% initialize another counter to check if iterates are diverging</span>
+0043 d0=abs(x2-x1);      <span class="comment">% initialize d0 to hold the distance between the</span>
+0044                     <span class="comment">% last two iterates</span>
+0045 
+0046 <span class="keyword">while</span> abs(f2)&gt;tol &amp;&amp; k&lt;=max;   
+0047     
+0048     <span class="keyword">if</span> abs(f0-f1)&lt;1e-12;
+0049         disp(<span class="string">'denominator vanishes'</span>); 
+0050         x=x(1:k); <span class="keyword">return</span>;     <span class="comment">% return vector of iterates so far</span>
+0051     <span class="keyword">elseif</span> abs(f1-f2)&lt;1e-12;
+0052         disp(<span class="string">'denominator vanishes'</span>); 
+0053         x=x(1:k); <span class="keyword">return</span>;     <span class="comment">% return vector of iterates so far</span>
+0054     <span class="keyword">elseif</span> abs(f0-f2)&lt;1e-12;
+0055         disp(<span class="string">'denominator vanishes'</span>); 
+0056         x=x(1:k); <span class="keyword">return</span>;     <span class="comment">% return vector of iterates so far</span>
+0057     <span class="keyword">end</span>
+0058     
+0059     <span class="comment">% update our estimate of the root</span>
+0060     x(k)=x0*f1*f2/((f0-f1)*(f0-f2))+f0*x1*f2/((f1-f0)*(f1-f2))+<span class="keyword">...</span>
+0061         f0*f1*x2/((f2-f0)*(f2-f1));   
+0062     
+0063     d1=abs(x(k)-x(k-1));    <span class="comment">% update d1</span>
+0064     <span class="keyword">if</span> d1&gt;d0;   <span class="comment">% then distance between succesive iterates is increasing</span>
+0065         l=l+1;  <span class="comment">% increment l</span>
+0066         <span class="keyword">if</span> l&gt;max/10;    <span class="comment">% check if the distance between successive iterates</span>
+0067                         <span class="comment">% has been increasing for the last max/10</span>
+0068                         <span class="comment">% iterations</span>
+0069             disp(<span class="string">'distance between succesive iterates is increasing'</span>);
+0070             x=x(1:k); <span class="keyword">return</span>;   <span class="comment">% return vector of iterates so far</span>
+0071         <span class="keyword">end</span>
+0072     <span class="keyword">else</span>
+0073         l=0;    <span class="comment">% reset l</span>
+0074     <span class="keyword">end</span>
+0075     d0=d1;      <span class="comment">% update d0</span>
+0076 
+0077     x0 = x1;
+0078     x1 = x2;
+0079     x2 = x(k);
+0080     f0=f1;              <span class="comment">% update f0</span>
+0081     f1=f2;              <span class="comment">% update f1</span>
+0082     f2=feval(f,x(k)); <span class="comment">% update f2</span>
+0083     
+0084     k=k+1;  <span class="comment">% increment counter</span>
+0085 <span class="keyword">end</span>
+0086 
+0087 <span class="keyword">if</span> k==max+1;
+0088     disp(<span class="string">'maximum number of iterations reached'</span>);
+0089 <span class="keyword">end</span>
+0090 x=x(k-1);    <span class="comment">% set x to the most recent iterate</span>
+0091 
+0092 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

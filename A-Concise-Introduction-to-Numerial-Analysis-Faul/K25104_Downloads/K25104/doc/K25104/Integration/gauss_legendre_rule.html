@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gauss_legendre_rule</title>
+  <meta name="keywords" content="gauss_legendre_rule">
+  <meta name="description" content="Employs Gauss-Legendre rule to integrate f between a and b">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">Integration</a> &gt; gauss_legendre_rule.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\Integration&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>gauss_legendre_rule
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Employs Gauss-Legendre rule to integrate f between a and b</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ Q ] = gauss_legendre_rule( f,a,b,n ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Employs Gauss-Legendre rule to integrate f between a and b
+ Input arguments:
+   f, function handle
+   a,b, integration bounds, a&lt;b
+   n, number of abscissae
+ Output arguments:
+   Q, value of integral</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../K25104/Interpolation/Lagrangecardinal.html" class="code" title="function L = Lagrangecardinal( nodes,k )">Lagrangecardinal</a>	Returns the k-th Lagrange cardinal polynomial for the given nodes</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="composite_rule.html" class="code" title="function [ Q ] = composite_rule( f,a,b,n,m,rule )">composite_rule</a>	Splits the interval [a,b] into n equal subintervals, then numerically</li><li><a href="gauss_legendre_rule_script.html" class="code" title="">gauss_legendre_rule_script</a>	Usage example for gauss_legendre_rule</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ Q ] = gauss_legendre_rule( f,a,b,n )</a>
+0002 <span class="comment">% Employs Gauss-Legendre rule to integrate f between a and b</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   f, function handle</span>
+0005 <span class="comment">%   a,b, integration bounds, a&lt;b</span>
+0006 <span class="comment">%   n, number of abscissae</span>
+0007 <span class="comment">% Output arguments:</span>
+0008 <span class="comment">%   Q, value of integral</span>
+0009 
+0010 <span class="comment">% first check user inputs</span>
+0011 <span class="keyword">if</span> isa(f,<span class="string">'function_handle'</span>)==0;
+0012     error(<span class="string">'input must be a function handle'</span>);
+0013 <span class="keyword">elseif</span> a&gt;=b;
+0014     error(<span class="string">'invalid interval'</span>);
+0015 <span class="keyword">elseif</span> mod(n,1)~=0 || n&lt;=0; <span class="comment">% if n does not equal zero modulo 1 then it</span>
+0016                             <span class="comment">% is not an integer value</span>
+0017     error(<span class="string">'input must be a positive integer'</span>);
+0018 <span class="keyword">end</span>
+0019 
+0020 syms x;     <span class="comment">% create a symbolic variable</span>
+0021 legendre=legendreP(n,x);    <span class="comment">% look up the n-th Legendre polynomial</span>
+0022 legendre=sym2poly(legendre);<span class="comment">% convert symbolic expression to vector of</span>
+0023                             <span class="comment">% polynomial coefficents</span>
+0024 nodes=roots(legendre);  <span class="comment">% roots of the Legendre polynomial</span>
+0025 
+0026 <span class="comment">% generate the weights by integrating the</span>
+0027 <span class="comment">% Lagrange interpolating polynomials</span>
+0028 weights = zeros(n); 
+0029 syms L; <span class="comment">% symbolic variable to hold Lagrange polynomial</span>
+0030 <span class="keyword">for</span> k=1:n;
+0031     L = <a href="../../K25104/Interpolation/Lagrangecardinal.html" class="code" title="function L = Lagrangecardinal( nodes,k )">Lagrangecardinal</a>( nodes,k );
+0032     weights(k) = int(L,x,-1,1);
+0033 <span class="keyword">end</span>
+0034 
+0035 Q=0;    <span class="comment">% initialize Q</span>
+0036 
+0037 <span class="comment">% evaluate the quadrature</span>
+0038 <span class="comment">% shifting the nodes to the interval [a,b]</span>
+0039 nodes = (b-a)/2* nodes + (a+b)/2 * ones(n,1);
+0040 <span class="keyword">for</span> i=1:n;
+0041     Q=Q+weights(i)*feval(f,nodes(i));
+0042 <span class="keyword">end</span>
+0043 <span class="comment">% adjusting the weights by a factor of (b-a)/2</span>
+0044 Q=(b-a)/2*Q;
+0045 
+0046 <span class="keyword">end</span>
+0047</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

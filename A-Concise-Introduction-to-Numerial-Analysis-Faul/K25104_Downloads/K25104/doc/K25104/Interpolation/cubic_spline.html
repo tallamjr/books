@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cubic_spline</title>
+  <meta name="keywords" content="cubic_spline">
+  <meta name="description" content="Fits a cubic spline interpolant to the function at given nodes, and evaluates it at the specified points in x.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">Interpolation</a> &gt; cubic_spline.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\Interpolation&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cubic_spline
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Fits a cubic spline interpolant to the function at given nodes, and evaluates it at the specified points in x.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ y ] = cubic_spline( nodes,values,a,b,x ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Fits a cubic spline interpolant to the function at given nodes, and evaluates it at the specified points in x.
+ Input arguments:
+   nodes, the interpolation nodes
+   values, function values at the nodes
+   a,b, values of the the derivatives at the endpoints
+   x, points at which the interpolating spline should be evaluated
+ Output arguments:
+   y, value of spline at x</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="spline_deriv.html" class="code" title="function [ d ] = spline_deriv( nodes, values, a,b )">spline_deriv</a>	Calculates the derivatives of the cubic spline at the interior nodes.</li><li><a href="spline_pieces.html" class="code" title="function [ coeffs ] = spline_pieces( nodes,values, derivs )">spline_pieces</a>	Calculates the coefficients of the polynomial pieces</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="cubic_spline_script.html" class="code" title="">cubic_spline_script</a>	Usage example for cubic_spline</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ y ] = cubic_spline( nodes,values,a,b,x )</a>
+0002 <span class="comment">% Fits a cubic spline interpolant to the function at given nodes, and evaluates it at the specified points in x.</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   nodes, the interpolation nodes</span>
+0005 <span class="comment">%   values, function values at the nodes</span>
+0006 <span class="comment">%   a,b, values of the the derivatives at the endpoints</span>
+0007 <span class="comment">%   x, points at which the interpolating spline should be evaluated</span>
+0008 <span class="comment">% Output arguments:</span>
+0009 <span class="comment">%   y, value of spline at x</span>
+0010 
+0011 [n,m]=size(nodes);   <span class="comment">% finding the size of nodes</span>
+0012 [p,q]=size(values);  <span class="comment">% finding the size of values</span>
+0013 <span class="keyword">if</span> m~=1 || q~=1
+0014     error(<span class="string">'inputs must be column vectors'</span>);
+0015 <span class="keyword">elseif</span> n~=p
+0016     error(<span class="string">'input vectors must be the same length'</span>);
+0017 <span class="keyword">elseif</span> max(x)&gt;max(nodes) || min(x)&lt;min(nodes)
+0018     error(<span class="string">'the interpolant will not be defined at all of the points in x'</span>);
+0019 <span class="keyword">end</span>
+0020 m=length(x);    <span class="comment">% finding the length of x</span>
+0021 
+0022 
+0023 d=<a href="spline_deriv.html" class="code" title="function [ d ] = spline_deriv( nodes, values, a,b )">spline_deriv</a>(nodes,values,a,b); <span class="comment">% this subroutine calculates the</span>
+0024                                   <span class="comment">% derivatives at the internal nodes.</span>
+0025 derivs=[a;d;b];                   <span class="comment">% create vector which holds all the</span>
+0026                                   <span class="comment">% derivatives (including endpoints).</span>
+0027 
+0028 coeffs=<a href="spline_pieces.html" class="code" title="function [ coeffs ] = spline_pieces( nodes,values, derivs )">spline_pieces</a>(nodes,values,derivs); <span class="comment">% this subroutine calculates the</span>
+0029                                   <span class="comment">% coefficients of the cubic pieces on</span>
+0030                                   <span class="comment">% each subinterval</span>
+0031                                    
+0032 y=zeros(m,1);   <span class="comment">% intialise vector y</span>
+0033 k=1;      
+0034 <span class="keyword">for</span> j=1:m;
+0035     point=x(j);
+0036     <span class="keyword">if</span> point&gt;nodes(k+1) <span class="comment">% then the point lies in the next subinterval</span>
+0037         k=k+1;  <span class="comment">% increment k</span>
+0038     <span class="keyword">end</span> 
+0039     temp=point-nodes(k);
+0040     y(j)=coeffs(k,1)+coeffs(k,2)*temp+coeffs(k,3)*temp^2+coeffs(k,4)*temp^3;
+0041 <span class="keyword">end</span>
+0042 
+0043 <span class="keyword">end</span>
+0044</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

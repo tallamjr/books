@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of iteration_analysis</title>
+  <meta name="keywords" content="iteration_analysis">
+  <meta name="description" content="Calculates the iteration matrix and its eigenvalues">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">LinearSystems</a> &gt; iteration_analysis.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\LinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>iteration_analysis
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Calculates the iteration matrix and its eigenvalues</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ H,E ] = iteration_analysis( C,B,w ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calculates the iteration matrix and its eigenvalues 
+   arising from solving the system Ax = b iteratively 
+   by splitting A=B+C and Cx=-Bx+b.
+ Input arguments:
+   C, square matrix
+   B, square matrix
+   w, relaxation parameter (w=1 gives unrelaxed iterations)
+ Output arguments:
+   H, iteration matrix 
+   E, eigenvalues of the iteration matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Gauss_Seidel.html" class="code" title="function [ x,k,H,E ] = Gauss_Seidel( A,b,x0,w,imax )">Gauss_Seidel</a>	Solves the linear system Ax=b iteratively using the Gauss-Seidel method.</li><li><a href="iteration_analysis_script.html" class="code" title="">iteration_analysis_script</a>	Usage example for iteration_analysis</li><li><a href="Jacobi.html" class="code" title="function [ x,k,H,E ] = Jacobi( A,b,x0,w,imax )">Jacobi</a>	Solves the linear system Ax=b iteratively by Jacobi method.</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ H,E ] = iteration_analysis( C,B,w )</a>
+0002 <span class="comment">% Calculates the iteration matrix and its eigenvalues</span>
+0003 <span class="comment">%   arising from solving the system Ax = b iteratively</span>
+0004 <span class="comment">%   by splitting A=B+C and Cx=-Bx+b.</span>
+0005 <span class="comment">% Input arguments:</span>
+0006 <span class="comment">%   C, square matrix</span>
+0007 <span class="comment">%   B, square matrix</span>
+0008 <span class="comment">%   w, relaxation parameter (w=1 gives unrelaxed iterations)</span>
+0009 <span class="comment">% Output arguments:</span>
+0010 <span class="comment">%   H, iteration matrix</span>
+0011 <span class="comment">%   E, eigenvalues of the iteration matrix</span>
+0012 
+0013 [m,n]=size(C); <span class="comment">% find the size of C</span>
+0014 <span class="keyword">if</span> n~= m
+0015     error(<span class="string">'first input is not a square matrix'</span>);
+0016 <span class="keyword">end</span>;
+0017 [k,l]=size(B); <span class="comment">% find the size of B</span>
+0018 <span class="keyword">if</span> k~= l
+0019     error(<span class="string">'second input is not a square matrix'</span>);
+0020 <span class="keyword">end</span>;
+0021 <span class="keyword">if</span> m~=k
+0022     error(<span class="string">'matrix dimensions do not agree'</span>);
+0023 <span class="keyword">end</span>;
+0024     
+0025 H=(1-w)*eye(n)-w*inv(C)*B;
+0026 E=eig(H);
+0027 
+0028 <span class="keyword">end</span>
+0029 
+0030</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

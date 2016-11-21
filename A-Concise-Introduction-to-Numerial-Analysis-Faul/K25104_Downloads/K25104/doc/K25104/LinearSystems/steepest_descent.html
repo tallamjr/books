@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of steepest_descent</title>
+  <meta name="keywords" content="steepest_descent">
+  <meta name="description" content="Implements method of steepest descent to find the solution of Ax=b.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">LinearSystems</a> &gt; steepest_descent.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\LinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>steepest_descent
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Implements method of steepest descent to find the solution of Ax=b.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ x,k ] = steepest_descent( A,b,tol ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Implements method of steepest descent to find the solution of Ax=b.
+ Input arguments:
+   A, symmetric positive definite matrix
+   b, column vector
+   tol, convergence is accepted when |Ax-b|&lt;tol
+ Output arguments:
+   x, solution to Ax=b
+   k, number of iterations</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="steepest_descent_script_1.html" class="code" title="">steepest_descent_script_1</a>	Usage example for steepest_descent</li><li><a href="steepest_descent_script_2.html" class="code" title="">steepest_descent_script_2</a>	Usage example for steepest_descent</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ x,k ] = steepest_descent( A,b,tol )</a>
+0002 <span class="comment">% Implements method of steepest descent to find the solution of Ax=b.</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   A, symmetric positive definite matrix</span>
+0005 <span class="comment">%   b, column vector</span>
+0006 <span class="comment">%   tol, convergence is accepted when |Ax-b|&lt;tol</span>
+0007 <span class="comment">% Output arguments:</span>
+0008 <span class="comment">%   x, solution to Ax=b</span>
+0009 <span class="comment">%   k, number of iterations</span>
+0010 
+0011 [n,m]=size(A); <span class="comment">% finding the size of A</span>
+0012 [p,q]=size(b); <span class="comment">% finding the size of b</span>
+0013 <span class="keyword">if</span> n~= m;
+0014     error(<span class="string">'first input is not a square matrix'</span>);
+0015 <span class="keyword">elseif</span> q~=1;
+0016     error(<span class="string">'second input is not a column vector'</span>);
+0017 <span class="keyword">elseif</span> p~=n;
+0018     error(<span class="string">'input dimensions do not agree'</span>);
+0019 <span class="keyword">elseif</span> tol&lt;=0;
+0020     error(<span class="string">'tolerance should be positive'</span>);
+0021 <span class="keyword">elseif</span> ~issymmetric(A);
+0022     error(<span class="string">'first input is not symmetric'</span>);
+0023 <span class="keyword">else</span>
+0024     [~,a] = chol(A);
+0025     <span class="keyword">if</span> a
+0026         error(<span class="string">'first input is not positive definite'</span>);
+0027     <span class="keyword">end</span>
+0028 <span class="keyword">end</span>
+0029 
+0030 x=zeros(n,1);  <span class="comment">% initialize x</span>
+0031 g=-b; <span class="comment">% initialize gradient, the negative of the steepest descent direction</span>
+0032 k=0;  <span class="comment">% initialize counter</span>
+0033 
+0034 <span class="keyword">while</span> sqrt(g'*g)&gt;tol;
+0035     w=g'*g/(g'*A*g);    <span class="comment">% calculate step size in the descent direction</span>
+0036     x=x-w*g;            <span class="comment">% update x</span>
+0037     g=A*x-b;            <span class="comment">% update g</span>
+0038     k=k+1;              <span class="comment">% increment counter</span>
+0039 <span class="keyword">end</span>
+0040     
+0041 <span class="keyword">end</span>
+0042</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

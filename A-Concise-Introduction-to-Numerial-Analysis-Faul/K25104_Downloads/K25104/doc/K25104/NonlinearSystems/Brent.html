@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Brent</title>
+  <meta name="keywords" content="Brent">
+  <meta name="description" content="implements Brent's algorithm to find a solution of f(x)=0;">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">NonlinearSystems</a> &gt; Brent.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\NonlinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Brent
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>implements Brent's algorithm to find a solution of f(x)=0;</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ x,k,z ] = Brent( f,a,b,tol,max ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> implements Brent's algorithm to find a solution of f(x)=0;
+ Input arguments:
+   f, function handle or vector of polynomial coefficients
+   b, initial iterate
+   c, initial contrapoint
+   tol, tolerance
+   max, maximum number of iterations
+ Output arguments:
+   x, solution
+   k, number of iterations
+   z, holds information which method was used for each iteration; 
+     1 -&gt; Binary search
+     2 -&gt; Inverse quadratic interpolation
+     3 -&gt; Linear interpolation</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Brent_script.html" class="code" title="">Brent_script</a>	Usage example for Brent</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ x,k,z ] = Brent( f,a,b,tol,max )</a>
+0002 <span class="comment">% implements Brent's algorithm to find a solution of f(x)=0;</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   f, function handle or vector of polynomial coefficients</span>
+0005 <span class="comment">%   b, initial iterate</span>
+0006 <span class="comment">%   c, initial contrapoint</span>
+0007 <span class="comment">%   tol, tolerance</span>
+0008 <span class="comment">%   max, maximum number of iterations</span>
+0009 <span class="comment">% Output arguments:</span>
+0010 <span class="comment">%   x, solution</span>
+0011 <span class="comment">%   k, number of iterations</span>
+0012 <span class="comment">%   z, holds information which method was used for each iteration;</span>
+0013 <span class="comment">%     1 -&gt; Binary search</span>
+0014 <span class="comment">%     2 -&gt; Inverse quadratic interpolation</span>
+0015 <span class="comment">%     3 -&gt; Linear interpolation</span>
+0016 
+0017 <span class="comment">% first check user inputs</span>
+0018 <span class="keyword">if</span> tol&lt;=0;
+0019     error(<span class="string">'tolerance must be positive'</span>);
+0020 <span class="keyword">elseif</span> max&lt;=0;
+0021     error(<span class="string">'maximum number of iterations must be positive'</span>);
+0022 <span class="keyword">elseif</span> isa(f,<span class="string">'function_handle'</span>);
+0023     <span class="comment">% do nothing</span>
+0024 <span class="keyword">elseif</span> isa(f,<span class="string">'double'</span>); 
+0025     [n,m]=size(f);  <span class="comment">% find the size of f</span>
+0026     <span class="keyword">if</span> n~=1 &amp;&amp; m~=1; <span class="comment">% then f is not a vector</span>
+0027         error([<span class="string">'input must be a function handle or vector holding '</span>,<span class="keyword">...</span>
+0028             <span class="string">'polynomial coefficients'</span>]);
+0029     <span class="keyword">else</span> 
+0030         v=poly2sym(f);  <span class="comment">% this converts the vector of coefficients to</span>
+0031                         <span class="comment">% an expression for the polynomial</span>
+0032         f=matlabFunction(v);    <span class="comment">% this converts the expression to a</span>
+0033                                 <span class="comment">% function handle</span>
+0034     <span class="keyword">end</span>
+0035 <span class="keyword">else</span>
+0036     error([<span class="string">'input must be a function handle or vector holding '</span>,<span class="keyword">...</span>
+0037             <span class="string">'polynomial coefficients'</span>]);
+0038 <span class="keyword">end</span>
+0039  
+0040 delta=tol/2;        <span class="comment">% set delta</span>
+0041 
+0042 fa=feval(f,a);      <span class="comment">% evaluate f(a)</span>
+0043 fb=feval(f,b);      <span class="comment">% evaluate f(b)</span>
+0044 k=1;                <span class="comment">% initialize iteration counter</span>
+0045 
+0046 <span class="keyword">if</span> fa==0;      <span class="comment">% check in case the solution is at one of the endpoints</span>
+0047     x=a; <span class="keyword">return</span>;
+0048 <span class="keyword">elseif</span> fb==0;
+0049     x=b; <span class="keyword">return</span>;
+0050 <span class="keyword">elseif</span> fa*fb&gt;0;   <span class="comment">% if f(a),f(b) have the same sign</span>
+0051         error(<span class="string">'function values at endpoints have the same sign'</span>);
+0052 <span class="keyword">end</span>
+0053 
+0054 <span class="keyword">if</span> abs(fb)&lt;abs(fa);     <span class="comment">% then we need to interchange a and b, so the</span>
+0055                         <span class="comment">% iterate is the best approximation to x</span>
+0056     swap=a;             <span class="comment">% hold a</span>
+0057     a=b; a=swap;        <span class="comment">% swap a and b</span>
+0058     fa=feval(f,a);      <span class="comment">% revaluate f(a)</span>
+0059     fb=feval(f,b);      <span class="comment">% revaluate f(b)</span>
+0060 <span class="keyword">end</span>
+0061 
+0062 c=a;            <span class="comment">% we will need an extra variables to hold the previous</span>
+0063 d=a;            <span class="comment">% iterates, in the first instance set these to a.</span>
+0064 fc=fa; fd=fa;       <span class="comment">% store f(c), f(d)</span>
+0065 
+0066 z=zeros(max,1);     <span class="comment">% z will be a variable which holds information on</span>
+0067 z(1)=1;             <span class="comment">% whether the previous iteration used binary</span>
+0068                     <span class="comment">% search, linear interpolation or IQI.</span>
+0069                     
+0070 
+0071 
+0072 <span class="comment">% start of algorithm</span>
+0073 <span class="keyword">while</span> abs(a-b)&gt;tol &amp;&amp; k&lt;=max;
+0074     
+0075     <span class="keyword">if</span> fa~=fb &amp;&amp; fb~=fc &amp;&amp; fc~=fa;  <span class="comment">% then choose s according to</span>
+0076                                   <span class="comment">% inverse quadratic interpolation</span>
+0077         s=a*fb*fc/((fa-fb)*(fa-fc))+fa*b*fc/((fb-fa)*(fb-fc))<span class="keyword">...</span>
+0078             +fa*fb*c/((fc-fa)*(fc-fb));
+0079         temp=2;     <span class="comment">% temporarily store this choice of interpolation</span>
+0080     <span class="keyword">else</span>                          <span class="comment">% if any of fa,fb,fc coincide,</span>
+0081                                   <span class="comment">% choose s according to linear</span>
+0082                                   <span class="comment">% interpolation</span>
+0083         s=b-fb*(b-a)/(fb-fa);
+0084         temp=3;     <span class="comment">% temporarily store this choice of interpolation</span>
+0085     <span class="keyword">end</span>
+0086     
+0087     <span class="keyword">if</span> or((s&lt;(3*a+b)/4 &amp; s&lt;b),(s&gt;(3*a+b)/4 &amp; s&gt;b)); <span class="comment">% if s is not</span>
+0088                                                     <span class="comment">% between (3*a+b)/4</span>
+0089                                                     <span class="comment">% and b</span>
+0090         s=(a+b)/2; z(k+1)=1; <span class="comment">% choose s according to binary search</span>
+0091                              <span class="comment">% and set z=1</span>
+0092     <span class="keyword">elseif</span> z(k)==1 &amp;&amp; abs(b-c)&lt;delta;
+0093         s=(a+b)/2; z(k+1)=1; <span class="comment">% choose s according to binary search</span>
+0094                              <span class="comment">% and set z=1</span>
+0095     <span class="keyword">elseif</span> z(k)~=1 &amp;&amp; abs(c-d)&lt;delta;
+0096         s=(a+b)/2; z(k+1)=1; <span class="comment">% choose s according to binary search</span>
+0097                              <span class="comment">% and set z=1</span>
+0098     <span class="keyword">elseif</span> z(k)==1 &amp;&amp; abs(s-b)&gt;=abs(b-a)/2;
+0099         s=(a+b)/2; z(k+1)=1; <span class="comment">% choose s according to binary search</span>
+0100                              <span class="comment">% and set z=1</span>
+0101     <span class="keyword">elseif</span> z(k)~=1 &amp;&amp; abs(s-b)&gt;=abs(b-d)/2;
+0102         s=(a+b)/2; z(k+1)=1; <span class="comment">% choose s according to binary search</span>
+0103                              <span class="comment">% and set z=1</span>
+0104     <span class="keyword">else</span>
+0105         z(k+1)=temp;
+0106     <span class="keyword">end</span>
+0107     
+0108     fs=feval(f,s);     <span class="comment">% evaluate f(s)</span>
+0109     <span class="keyword">if</span> fs==0;          <span class="comment">% check if we have found the solution</span>
+0110         x=s;
+0111         <span class="keyword">return</span>;
+0112     <span class="keyword">end</span>
+0113      
+0114     d=c;    <span class="comment">% update d</span>
+0115     c=b;    <span class="comment">% update c</span>
+0116     fa=feval(f,a);     <span class="comment">% evaluate f(a)</span>
+0117     fb=feval(f,b);     <span class="comment">% evaluate f(b)</span>
+0118     fd=feval(f,d);     <span class="comment">% evaluate f(d)</span>
+0119     fc=feval(f,c);     <span class="comment">% evaluate f(c)</span>
+0120     
+0121     <span class="keyword">if</span> fa*fs&lt;0;   <span class="comment">% if f(a) and f(s) have different signs</span>
+0122         b=s;        <span class="comment">% update b</span>
+0123         fb=feval(f,b);     <span class="comment">% update f(b)</span>
+0124     <span class="keyword">else</span> 
+0125         a=s;        <span class="comment">% update a</span>
+0126         fa=feval(f,a);     <span class="comment">% update f(a)</span>
+0127     <span class="keyword">end</span>
+0128     
+0129     <span class="keyword">if</span> abs(fa)&lt;abs(fb);     <span class="comment">% then interchange a and b, so the iterate</span>
+0130                             <span class="comment">% is the best approximation to x</span>
+0131         swap=a;             <span class="comment">% hold a</span>
+0132         a=b; b=swap;        <span class="comment">% swap b and a</span>
+0133         swap=fa;            <span class="comment">% hold f(a)</span>
+0134         fa=fb;  fb=swap;    <span class="comment">% swap f(a) and f(b)</span>
+0135     <span class="keyword">end</span>
+0136  
+0137     <span class="keyword">if</span> fb==0;      <span class="comment">% check if we have found the solution</span>
+0138         x=a;
+0139     <span class="keyword">end</span>
+0140     
+0141     k=k+1;  <span class="comment">% increment k</span>
+0142 <span class="keyword">end</span>
+0143 
+0144 x=b;        <span class="comment">% set x to the most recent iterate</span>
+0145 z=z(1:k);   <span class="comment">% shorten z</span>
+0146 
+0147 <span class="keyword">if</span> k==max+1;
+0148     disp(<span class="string">'maximum number of iterations reached'</span>);
+0149 <span class="keyword">end</span>
+0150     
+0151 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

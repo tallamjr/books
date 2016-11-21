@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Backward</title>
+  <meta name="keywords" content="Backward">
+  <meta name="description" content="Solves the upper triangular system of equations Ax = b">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">LinearSystems</a> &gt; Backward.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\LinearSystems&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>Backward
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Solves the upper triangular system of equations Ax = b</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [x]=Backward(A,b) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Solves the upper triangular system of equations Ax = b
+ Input arguments:
+   A, square upper triangular matrix
+   b, Ax = b
+ Output arguments:
+   x solution</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Backward_script.html" class="code" title="">Backward_script</a>	Usage example for Backward</li><li><a href="Forward_script.html" class="code" title="">Forward_script</a>	Usage example for Forward</li><li><a href="Gaussian_elementary_script.html" class="code" title="">Gaussian_elementary_script</a>	Usage example for Gaussian_elementary</li><li><a href="Gaussian_partial_script.html" class="code" title="">Gaussian_partial_script</a>	Usage example for Gaussian_partial</li><li><a href="Gaussian_scaledpartial_script.html" class="code" title="">Gaussian_scaledpartial_script</a>	Usage example for Gaussian_scaledpartial</li><li><a href="Gaussian_total_script.html" class="code" title="">Gaussian_total_script</a>	Usage example for Gaussian_total</li><li><a href="inverse_iteration.html" class="code" title="function [ v,c,k ] = inverse_iteration( A,s,tol )">inverse_iteration</a>	Implements inverse iteration to find an eigenvalue of A</li><li><a href="LU_pivot_script.html" class="code" title="">LU_pivot_script</a>	Usage example for LU_pivot</li><li><a href="LU_script.html" class="code" title="">LU_script</a>	Usage example for LU</li><li><a href="../../K25104/PDEs/hockney.html" class="code" title="function [ u ] = hockney( a,b,c,d,f )">hockney</a>	HOCKNEY implements the hockney algorithm without FFT to solve the block</li><li><a href="../../K25104/PDEs/hockney_FFT.html" class="code" title="function [ u ] = hockney_FFT( a,b,c,d,f )">hockney_FFT</a>	Implements the Hockney algorithm with FFT to solve the block</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [x]=Backward(A,b)</a>
+0002 <span class="comment">% Solves the upper triangular system of equations Ax = b</span>
+0003 <span class="comment">% Input arguments:</span>
+0004 <span class="comment">%   A, square upper triangular matrix</span>
+0005 <span class="comment">%   b, Ax = b</span>
+0006 <span class="comment">% Output arguments:</span>
+0007 <span class="comment">%   x solution</span>
+0008 
+0009 [n,m]=size(A); <span class="comment">% finding the size of A</span>
+0010 <span class="keyword">if</span> n~= m
+0011     error(<span class="string">'input is not a square matrix'</span>);
+0012 <span class="keyword">end</span>
+0013 <span class="keyword">if</span> size(b,1) ~= n
+0014     error(<span class="string">'input dimensions do not match'</span>);
+0015 <span class="keyword">end</span>
+0016 <span class="keyword">if</span> ~istriu(A)
+0017     error(<span class="string">'matrix is not upper triangular'</span>)
+0018 <span class="keyword">end</span>
+0019 
+0020 x = zeros(n,1); <span class="comment">% initialize x to the same dimension</span>
+0021 <span class="keyword">if</span> abs(A(n,n)) &gt; 1e-12 <span class="comment">% not comparing to zero because of possible</span>
+0022                        <span class="comment">% rounding errors</span>
+0023     x(n) = b(n)/A(n,n); <span class="comment">% solve for the last element of x</span>
+0024 <span class="keyword">else</span>
+0025     error(<span class="string">'input singular'</span>); <span class="comment">% A is singular if any of the diagonal</span>
+0026                             <span class="comment">% elements are zero</span>
+0027 <span class="keyword">end</span>
+0028 <span class="keyword">for</span> k=n:-1:1 <span class="comment">% the loop considers one row after the other backwards</span>
+0029     <span class="keyword">if</span> abs(A(k,k))&gt;1e-12 <span class="comment">% not comparing to zero because of possible</span>
+0030                          <span class="comment">% rounding errors</span>
+0031         temp = 0;
+0032         <span class="keyword">for</span> j=n:-1:k+1
+0033             temp = temp + A(k,j) * x(j); <span class="comment">% Multiply the elements of</span>
+0034                                      <span class="comment">% the k-th row of A after the</span>
+0035                                      <span class="comment">% diagonal by the elements of x</span>
+0036                                      <span class="comment">% already calculated</span>
+0037         <span class="keyword">end</span>
+0038         x(k) = (b(k)-temp)/A(k,k); <span class="comment">% solve for the k-th element of x</span>
+0039     <span class="keyword">else</span>
+0040         error(<span class="string">'input singular'</span>); <span class="comment">% A is singular if any of the diagonal</span>
+0041                                 <span class="comment">% elements are zero</span>
+0042     <span class="keyword">end</span>
+0043 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

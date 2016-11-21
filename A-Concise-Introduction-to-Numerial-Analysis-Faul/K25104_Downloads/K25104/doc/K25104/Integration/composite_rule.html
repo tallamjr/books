@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of composite_rule</title>
+  <meta name="keywords" content="composite_rule">
+  <meta name="description" content="Splits the interval [a,b] into n equal subintervals, then numerically">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">K25104</a> &gt; <a href="index.html">Integration</a> &gt; composite_rule.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for K25104\Integration&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>composite_rule
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Splits the interval [a,b] into n equal subintervals, then numerically</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [ Q ] = composite_rule( f,a,b,n,m,rule ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Splits the interval [a,b] into n equal subintervals, then numerically
+ integrates f on each interval according to the rule prescribed
+ Input arguments:
+   f, function handle
+   a,b, integration bounds
+   n, number of subintervals
+   m, number of abscissae (if applicable)
+   rule, rule for numerically integrating each subinterval
+     possible values of rule are: 'midpoint', 'trapezium', 'simpsons', 
+     'simpsons3/8', 'booles', 'milnes', 'gauss_legendre', 'gauss_lobatto' 
+     and 'gauss_radau'.
+ Output arguments:
+   Q, value of integral</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="booles_rule.html" class="code" title="function [ Q ] = booles_rule( f,a,b )">booles_rule</a>	Employs Boole's rule to integrate f between a and b</li><li><a href="gauss_legendre_rule.html" class="code" title="function [ Q ] = gauss_legendre_rule( f,a,b,n )">gauss_legendre_rule</a>	Employs Gauss-Legendre rule to integrate f between a and b</li><li><a href="gauss_lobatto_rule.html" class="code" title="function [ Q ] = gauss_lobatto_rule( f,a,b,n )">gauss_lobatto_rule</a>	Employs Gauss-Lobatto rule with Legendre polynomials</li><li><a href="midpoint_rule.html" class="code" title="function [ Q ] = midpoint_rule( f,a,b )">midpoint_rule</a>	Employs the midpoint rule to integrate f between a and b</li><li><a href="milnes_rule.html" class="code" title="function [ Q ] = milnes_rule( f,a,b )">milnes_rule</a>	Employs Milne's rule to integrate f between a and b</li><li><a href="simpsons_alt_rule.html" class="code" title="function [ Q ] = simpsons_alt_rule( f,a,b )">simpsons_alt_rule</a>	Employs Simpson's 3/8 rule to integrate f between a and b</li><li><a href="simpsons_rule.html" class="code" title="function [ Q ] = simpsons_rule( f,a,b )">simpsons_rule</a>	Employs Simpson's rule to integrate f between a and b</li><li><a href="trapezium_rule.html" class="code" title="function [ Q ] = trapezium_rule( f,a,b )">trapezium_rule</a>	Employs the trapezium rule to integrate f between a and b</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="composite_rule_script.html" class="code" title="">composite_rule_script</a>	Usage example for composite_rule</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ Q ] = composite_rule( f,a,b,n,m,rule )</a>
+0002 <span class="comment">% Splits the interval [a,b] into n equal subintervals, then numerically</span>
+0003 <span class="comment">% integrates f on each interval according to the rule prescribed</span>
+0004 <span class="comment">% Input arguments:</span>
+0005 <span class="comment">%   f, function handle</span>
+0006 <span class="comment">%   a,b, integration bounds</span>
+0007 <span class="comment">%   n, number of subintervals</span>
+0008 <span class="comment">%   m, number of abscissae (if applicable)</span>
+0009 <span class="comment">%   rule, rule for numerically integrating each subinterval</span>
+0010 <span class="comment">%     possible values of rule are: 'midpoint', 'trapezium', 'simpsons',</span>
+0011 <span class="comment">%     'simpsons3/8', 'booles', 'milnes', 'gauss_legendre', 'gauss_lobatto'</span>
+0012 <span class="comment">%     and 'gauss_radau'.</span>
+0013 <span class="comment">% Output arguments:</span>
+0014 <span class="comment">%   Q, value of integral</span>
+0015 
+0016 <span class="comment">% first check user inputs</span>
+0017 <span class="keyword">if</span> isa(f,<span class="string">'function_handle'</span>)==0;
+0018     error(<span class="string">'input must be a function handle'</span>);
+0019 <span class="keyword">elseif</span> a&gt;=b;
+0020     error(<span class="string">'invalid interval'</span>);
+0021 <span class="keyword">elseif</span> mod(n,1)~=0 || n&lt;=0; <span class="comment">% if n does not equal zero modulo 1 then it</span>
+0022                             <span class="comment">% is not an integer value</span>
+0023     error(<span class="string">'input must be a positive integer'</span>);
+0024 <span class="keyword">end</span>
+0025 
+0026 <span class="comment">% split interval into n equal subintervals</span>
+0027 x=linspace(a,b,n+1);
+0028 
+0029 y=zeros(n,1);<span class="comment">% initialize vector to hold contribution from each subinterval</span>
+0030 <span class="keyword">if</span> strcmp(rule,<span class="string">'midpoint'</span>);
+0031     <span class="keyword">for</span> i=1:n;
+0032         y(i)=<a href="midpoint_rule.html" class="code" title="function [ Q ] = midpoint_rule( f,a,b )">midpoint_rule</a>(f,x(i),x(i+1));
+0033     <span class="keyword">end</span>
+0034 <span class="keyword">elseif</span> strcmp(rule,<span class="string">'trapezium'</span>);
+0035     <span class="keyword">for</span> i=1:n;
+0036         y(i)=<a href="trapezium_rule.html" class="code" title="function [ Q ] = trapezium_rule( f,a,b )">trapezium_rule</a>(f,x(i),x(i+1));
+0037     <span class="keyword">end</span>
+0038 <span class="keyword">elseif</span> strcmp(rule,<span class="string">'simpsons'</span>);
+0039     <span class="keyword">for</span> i=1:n;
+0040         y(i)=<a href="simpsons_rule.html" class="code" title="function [ Q ] = simpsons_rule( f,a,b )">simpsons_rule</a>(f,x(i),x(i+1));
+0041     <span class="keyword">end</span>    
+0042 <span class="keyword">elseif</span> strcmp(rule,<span class="string">'simpsons3/8'</span>);
+0043     <span class="keyword">for</span> i=1:n;
+0044         y(i)=<a href="simpsons_alt_rule.html" class="code" title="function [ Q ] = simpsons_alt_rule( f,a,b )">simpsons_alt_rule</a>(f,x(i),x(i+1));
+0045     <span class="keyword">end</span>
+0046 <span class="keyword">elseif</span> strcmp(rule,<span class="string">'booles'</span>);
+0047     <span class="keyword">for</span> i=1:n;
+0048         y(i)=<a href="booles_rule.html" class="code" title="function [ Q ] = booles_rule( f,a,b )">booles_rule</a>(f,x(i),x(i+1));
+0049     <span class="keyword">end</span>
+0050 <span class="keyword">elseif</span> strcmp(rule,<span class="string">'milnes'</span>);
+0051     <span class="keyword">for</span> i=1:n;
+0052         y(i)=<a href="milnes_rule.html" class="code" title="function [ Q ] = milnes_rule( f,a,b )">milnes_rule</a>(f,x(i),x(i+1));
+0053     <span class="keyword">end</span>
+0054 <span class="keyword">elseif</span> strcmp(rule,<span class="string">'gauss_legendre'</span>);
+0055     <span class="keyword">if</span> mod(m,1)~=0||m&lt;=0; 
+0056         error(<span class="string">'input must be a positive integer'</span>);
+0057     <span class="keyword">end</span>
+0058     <span class="keyword">for</span> i=1:n;
+0059         y(i)=<a href="gauss_legendre_rule.html" class="code" title="function [ Q ] = gauss_legendre_rule( f,a,b,n )">gauss_legendre_rule</a>(f,x(i),x(i+1),m);
+0060     <span class="keyword">end</span>
+0061 <span class="keyword">elseif</span> strcmp(rule,<span class="string">'gauss_lobatto'</span>);
+0062     <span class="keyword">if</span> mod(m,1)~=0||m&lt;=0; 
+0063         error(<span class="string">'input must be a positive integer'</span>);
+0064     <span class="keyword">end</span>
+0065     <span class="keyword">for</span> i=1:n;
+0066         y(i)=<a href="gauss_lobatto_rule.html" class="code" title="function [ Q ] = gauss_lobatto_rule( f,a,b,n )">gauss_lobatto_rule</a>(f,x(i),x(i+1),m);
+0067     <span class="keyword">end</span>
+0068 <span class="keyword">elseif</span> strcmp(rule,<span class="string">'gauss_radau'</span>);
+0069     <span class="keyword">if</span> mod(m,1)~=0||m&lt;=0; 
+0070         error(<span class="string">'input must be a positive integer'</span>);
+0071     <span class="keyword">end</span>
+0072     <span class="keyword">for</span> i=1:n;
+0073         y(i)=gauss_radau_rule(f,x(i),x(i+1),m);
+0074     <span class="keyword">end</span>
+0075 <span class="keyword">else</span> 
+0076     error(<span class="string">'please enter a valid rule'</span>);
+0077 <span class="keyword">end</span>
+0078 
+0079 Q=sum(y);   <span class="comment">% sum contribution from each subinterval to get y</span>
+0080 
+0081 <span class="keyword">end</span>
+0082</pre></div>
+<hr><address>Generated on Mon 18-Jan-2016 10:25:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
